@@ -22,3 +22,7 @@ def test_lex_comma():
 def test_lex_bracket():
     input = '[]'
     assert lex(input) == [ token.LeftBracket(), token.RightBracket() ]
+
+def test_lex_unification():
+    input = '[] ='
+    assert lex(input) == [ token.LeftBracket(), token.RightBracket(), token.Unification() ]

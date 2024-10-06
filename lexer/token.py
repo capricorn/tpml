@@ -31,3 +31,7 @@ class LeftBracket(Token):
 @dataclass
 class RightBracket(Token):
     ...
+
+@dataclass
+class Unification(Token):
+    ...

@@ -19,6 +19,16 @@ def bracket(input: str) -> bool:
     assert len(input) > 0
     return input[0] == '[' or input[0] == ']'
 
+def unification(input: str) -> bool:
+    assert len(input) > 0
+    return input[0] == '='
+
+def consume_unification(input: str) -> Tuple[str, token.Token]:
+    assert len(input) > 0
+    assert input[0] == '='
+
+    return (input[1:], token.Unification())
+
 def consume_paren(input: str) -> Tuple[str, token.Token]:
     assert len(input) > 0
     ch = input[0]
@@ -83,6 +93,8 @@ def lex(input: str) -> List[token.Token]:
             input, token = consume_tag(input)
         elif bracket(input):
             input, token = consume_bracket(input)
+        elif unification(input):
+            input, token = consume_unification(input)
         else:
             raise LexError()
         
