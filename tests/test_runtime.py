@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 
 import parser.parse as parse
+import lexer.lex as lex
 from runtime import matcher
 
 def test_bs4_matches():
@@ -10,3 +11,15 @@ def test_bs4_matches():
     program = parse.parse('(a,[],[])')
     matches = matcher.match_bs4(program, soup=soup)
     assert matches[0]['href'] == 'https://news.ycombinator.com'
+
+def test_unify_operator():
+    soup = BeautifulSoup('', 'html.parser')
+    div = soup.new_tag('div')
+    span = soup.new_tag('span')
+
+    unification = parse.parse_unification(lex.lex('(div,[],[]) = (p,[],[])'))
+    unified_div = matcher.unify(unification, div, soup=soup)
+    unified_span = matcher.unify(unification, span, soup=soup)
+
+    assert unified_div.name == 'p'
+    assert unified_span.name == 'span'
