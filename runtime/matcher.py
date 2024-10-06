@@ -17,7 +17,20 @@ def unify(unification: ast.NodeUnification, node: Tag, soup: BeautifulSoup) -> T
 
     if unification.left.tag == node.name:
         new_tag = soup.new_tag(unification.right.tag)
-        new_tag.extend(node.children)
+        new_tag.extend(list(node.children))
         return new_tag
     else:
         return node
+
+def unify_tree(unification: ast.NodeUnification, root: Tag, soup: BeautifulSoup) -> Tag:
+    #root = root.replace_with(unify(unification, root, soup=soup))
+    children = [ e for e in root.children if isinstance(e, Tag) ]
+
+    while children != []:
+        child = children.pop(0)
+        new_child = unify(unification, child, soup=soup)
+        if child != new_child:
+            child.replace_with(new_child)
+        children.extend([ e for e in new_child.children if isinstance(e, Tag) ])
+    
+    return root

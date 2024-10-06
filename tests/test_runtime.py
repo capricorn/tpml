@@ -23,3 +23,14 @@ def test_unify_operator():
 
     assert unified_div.name == 'p'
     assert unified_span.name == 'span'
+
+def test_unify_tree_identity():
+    with open('tests/data/simple.html') as f:
+        html = f.read()
+        soup = BeautifulSoup(html, 'html.parser')
+
+    unification = parse.parse_unification(lex.lex('(div,[],[]) = (div,[],[])'))
+    new_soup = matcher.unify_tree(unification, root=soup, soup=soup)
+
+    soup2 = BeautifulSoup(html, 'html.parser')
+    assert soup2 == new_soup
