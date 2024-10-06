@@ -35,7 +35,7 @@ def consume_paren(input: str) -> Tuple[str, token.Token]:
 
     if ch == '(':
         return (input[1:], token.LeftParen())
-    elif input == ')':
+    elif ch == ')':
         return (input[1:], token.RightParen())
     else:
         assert False, "'ch' is not a parenthesis."

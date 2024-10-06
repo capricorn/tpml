@@ -18,9 +18,9 @@ def consume_balanced_token(left_match: token.Token, right_match: token.Token, to
     body = None
     for i in range(len(tokens)):
         tok = tokens[i]
-        if tok == left_match:
+        if isinstance(tok, type(left_match)):
             stack += 1
-        elif tok == right_match:
+        elif isinstance(tok, type(right_match)):
             stack -= 1
             if stack == 0:
                 body = tokens[1:i]
@@ -48,6 +48,14 @@ def parse_comma_delim(tokens: List[token.Token]) -> List[token.Token]:
     
     return tokens[1:]
 
+def consume_unification(tokens: List[token.Token]) -> List[token.Token]:
+    if len(tokens) == 0:
+        raise ParseError()
+    if not isinstance(tokens[0], token.Unification):
+        raise ParseError()
+    
+    return tokens[1:]
+
 def parse_attributes(tokens: List[token.Token]) -> Tuple[List[ast.HTMLAttribute], List[token.Token]]:
     # TODO: Correctly parse
     body, tokens = consume_balanced_token(token.LeftBracket(), token.RightBracket(), tokens)
@@ -58,8 +66,8 @@ def parse_children(tokens: List[token.Token]) -> Tuple[List[ast.HTMLNode], List[
     body, tokens = consume_balanced_token(token.LeftBracket(), token.RightBracket(), tokens)
     return body, tokens
 
-def parse_node(tokens: List[token.Token]) -> ast.HTMLNode:
-    body,_ = consume_balanced_token(token.LeftParen(), token.RightParen(), tokens)
+def parse_node(tokens: List[token.Token]) -> Tuple[ast.HTMLNode, List[token.Token]]:
+    body,remainder = consume_balanced_token(token.LeftParen(), token.RightParen(), tokens)
 
     tag, body = parse_tag(body)
     body = parse_comma_delim(body)
@@ -67,10 +75,18 @@ def parse_node(tokens: List[token.Token]) -> ast.HTMLNode:
     body = parse_comma_delim(body)
     children, body = parse_children(body)
 
-    return ast.HTMLNode(tag=tag, attrs=attrs, children=children)
+    return ast.HTMLNode(tag=tag, attrs=attrs, children=children), remainder
+
+def parse_unification(tokens: List[token.Token]) -> ast.NodeUnification:
+    left_node, tokens = parse_node(tokens)
+    tokens = consume_unification(tokens)
+    right_node, tokens = parse_node(tokens)
+
+    return ast.NodeUnification(left=left_node, right=right_node)
 
 def parse(input: str) -> ast.HTMLNode:
     tokens = lex.lex(input)
     # Initially, _only_ parse nodes of the form (tag,[],[])
-    return parse_node(tokens)
+    node, _ = parse_node(tokens)
+    return node
 

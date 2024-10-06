@@ -10,3 +10,8 @@ class HTMLNode:
     tag: str
     attrs: List[HTMLAttribute]
     children: List['HTMLNode']
+
+@dataclass
+class NodeUnification:
+    left: HTMLNode
+    right: HTMLNode
