@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from bs4 import BeautifulSoup, Tag
 
@@ -13,13 +13,17 @@ def match_bs4(program: ast.HTMLNode, soup: BeautifulSoup) -> List[Tag]:
     
     return matches
 
-def unify(unification: ast.NodeUnification, node: Tag, soup: BeautifulSoup) -> Tag:
+def unify(unification: ast.NodeUnification, node: Tag, soup: BeautifulSoup) -> Optional[Tag]:
     ''' If the left unification node matches node, replace node with the right unification node. '''
 
     if unification.left.tag == node.name or unification.left.tag == Wildcard.name:
-        new_tag = soup.new_tag(unification.right.tag)
-        new_tag.extend(list(node.children))
-        return new_tag
+        if unification.right.tag is None:
+            node.decompose()
+            return None
+        else:
+            new_tag = soup.new_tag(unification.right.tag)
+            new_tag.extend(list(node.children))
+            return new_tag
     else:
         return node
 
@@ -30,6 +34,8 @@ def unify_tree(unification: ast.NodeUnification, root: Tag, soup: BeautifulSoup)
     while children != []:
         child = children.pop(0)
         new_child = unify(unification, child, soup=soup)
+        if new_child is None:
+            continue
         if child != new_child:
             child.replace_with(new_child)
         children.extend([ e for e in new_child.children if isinstance(e, Tag) ])

@@ -57,3 +57,23 @@ def test_unify_tree_wildcard():
     soup2 = BeautifulSoup(transformed_html, 'html.parser')
 
     assert soup2.prettify() == new_soup.prettify()
+
+def test_unify_delete_node():
+    with open('tests/data/simple.html') as f:
+        html = f.read()
+        soup = BeautifulSoup(html, 'html.parser')
+
+    unification = parse.parse_unification(lex.lex('(p,[],[]) = ()'))
+    new_soup = matcher.unify_tree(unification, root=soup, soup=soup)
+
+    transformed_html = '''
+    <html>
+        <body>
+            <div>
+            </div>
+        </body>
+    </html>
+    '''
+
+    soup2 = BeautifulSoup(transformed_html, 'html.parser')
+    assert soup2.prettify() == new_soup.prettify()
