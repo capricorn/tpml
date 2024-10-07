@@ -34,3 +34,26 @@ def test_unify_tree_identity():
 
     soup2 = BeautifulSoup(html, 'html.parser')
     assert soup2 == new_soup
+
+def test_unify_tree_wildcard():
+    with open('tests/data/simple.html') as f:
+        html = f.read()
+        soup = BeautifulSoup(html, 'html.parser')
+
+    unification = parse.parse_unification(lex.lex('(_,[],[]) = (p,[],[])'))
+    new_soup = matcher.unify_tree(unification, root=soup, soup=soup)
+
+    transformed_html = '''
+    <p>
+        <p>
+            <p>foo</p>
+            <p>bar</p>
+            <p>
+                <p>baz</p>
+            </p>
+        </p>
+    </p>
+    '''
+    soup2 = BeautifulSoup(transformed_html, 'html.parser')
+
+    assert soup2.prettify() == new_soup.prettify()

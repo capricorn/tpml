@@ -22,7 +22,7 @@ class TagName(Token):
 
 @dataclass
 class Wildcard(Token):
-    ...
+    name = '_'
 
 @dataclass
 class LeftBracket(Token):

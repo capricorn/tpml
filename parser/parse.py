@@ -34,11 +34,11 @@ def consume_balanced_token(left_match: token.Token, right_match: token.Token, to
 def parse_tag(tokens: List[token.Token]) -> Tuple[str, List[token.Token]]:
     if len(tokens) == 0:
         raise ParseError()
-
-    if not isinstance(tokens[0], token.TagName):
-        raise ParseError()
     
-    return (tokens[0].name, tokens[1:])
+    if isinstance(tokens[0], token.TagName) or isinstance(tokens[0], token.Wildcard):
+        return (tokens[0].name, tokens[1:])
+
+    raise ParseError()
 
 def parse_comma_delim(tokens: List[token.Token]) -> List[token.Token]:
     if len(tokens) == 0:

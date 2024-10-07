@@ -3,6 +3,7 @@ from typing import List
 from bs4 import BeautifulSoup, Tag
 
 import parser.ast as ast
+from lexer.token import Wildcard
 
 def match_bs4(program: ast.HTMLNode, soup: BeautifulSoup) -> List[Tag]:
     matches = []
@@ -15,7 +16,7 @@ def match_bs4(program: ast.HTMLNode, soup: BeautifulSoup) -> List[Tag]:
 def unify(unification: ast.NodeUnification, node: Tag, soup: BeautifulSoup) -> Tag:
     ''' If the left unification node matches node, replace node with the right unification node. '''
 
-    if unification.left.tag == node.name:
+    if unification.left.tag == node.name or unification.left.tag == Wildcard.name:
         new_tag = soup.new_tag(unification.right.tag)
         new_tag.extend(list(node.children))
         return new_tag
