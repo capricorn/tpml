@@ -69,6 +69,9 @@ def parse_children(tokens: List[token.Token]) -> Tuple[List[ast.HTMLNode], List[
 def parse_node(tokens: List[token.Token]) -> Tuple[ast.HTMLNode, List[token.Token]]:
     body,remainder = consume_balanced_token(token.LeftParen(), token.RightParen(), tokens)
 
+    if body == []:
+        return ast.HTMLNode(tag=None, attrs=[], children=[]), remainder
+
     tag, body = parse_tag(body)
     body = parse_comma_delim(body)
     attrs, body = parse_attributes(body)

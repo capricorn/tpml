@@ -11,3 +11,6 @@ def test_parse_unification():
     assert uni == ast.NodeUnification(
         left=ast.HTMLNode(tag='p', attrs=[], children=[]),
         right=ast.HTMLNode(tag='span', attrs=[], children=[]))
+
+def test_parse_empty_node():
+    assert parse.parse('()') == ast.HTMLNode(tag=None, attrs=[], children=[])

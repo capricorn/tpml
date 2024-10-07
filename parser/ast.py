@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from dataclasses import dataclass
 
 @dataclass
@@ -7,7 +7,7 @@ class HTMLAttribute:
 
 @dataclass
 class HTMLNode:
-    tag: str
+    tag: Optional[str]
     attrs: List[HTMLAttribute]
     children: List['HTMLNode']
 
