@@ -34,6 +34,19 @@ def build_tag(variables, replacement_node: ast.HTMLNode, soup: BeautifulSoup) ->
 
     return new_tag
 
+def extract_variables(match_rule: ast.HTMLNode, matched_node: Tag) -> Dict:
+    vars = dict()
+    # TODO: Handle multiple occurrences
+    if match_rule.variable:
+        vars[match_rule.tag] = matched_node.name
+    
+    matched_node_children = [ child for child in matched_node.children if isinstance(child, Tag) ]
+    # TODO: Handle attributes
+    # TODO: Sanity checks?
+    for child_rule, child_node in zip(match_rule.children, matched_node_children):
+        vars = { **vars, **extract_variables(child_rule, child_node) }
+
+    return vars
 
 def unify(unification: ast.NodeUnification, node: Tag, soup: BeautifulSoup) -> Optional[Tag]:
     ''' If the left unification node matches node, replace node with the right unification node. '''

@@ -95,3 +95,19 @@ def test_build_tag():
 
     new_tag = matcher.build_tag(variables={'X':'span'}, replacement_node=rewrite_rule, soup=soup)
     assert new_tag.prettify() == doc_soup.prettify()
+
+def test_extract_variables():
+    match_rule = parse.parse('(p,[],[(X,[],[]),(Y,[],[])])')
+
+    document = '''
+    <p>
+        <span></span>
+        <div></div>
+    </p>
+    '''
+
+    soup = BeautifulSoup(document, 'html.parser')
+    vars = matcher.extract_variables(match_rule=match_rule, matched_node=soup.p)
+
+    assert ('X' in vars) and (vars['X'] == 'span')
+    assert ('Y' in vars) and (vars['Y'] == 'div')
