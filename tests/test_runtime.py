@@ -111,3 +111,18 @@ def test_extract_variables():
 
     assert ('X' in vars) and (vars['X'] == 'span')
     assert ('Y' in vars) and (vars['Y'] == 'div')
+
+def test_extract_children_variable():
+    match_rule = parse.parse('(p,[],Children)')
+
+    document = '''
+    <p>
+        <span></span>
+        <div></div>
+    </p>
+    '''
+
+    soup = BeautifulSoup(document, 'html.parser')
+    vars = matcher.extract_variables(match_rule=match_rule, matched_node=soup.p)
+
+    assert 'Children' in vars and list(soup.p.children) == vars['Children']

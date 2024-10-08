@@ -39,6 +39,10 @@ def extract_variables(match_rule: ast.HTMLNode, matched_node: Tag) -> Dict:
     # TODO: Handle multiple occurrences
     if match_rule.variable:
         vars[match_rule.tag] = matched_node.name
+
+    if len(match_rule.children) == 1 and match_rule.children[0].variable:
+        vars[match_rule.children[0].tag] = list(matched_node.children)
+        return vars
     
     matched_node_children = [ child for child in matched_node.children if isinstance(child, Tag) ]
     # TODO: Handle attributes
