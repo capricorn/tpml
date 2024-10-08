@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 from parser import ast
 from lexer import lex
@@ -71,6 +71,13 @@ def parse_attributes(tokens: List[token.Token]) -> Tuple[List[ast.HTMLAttribute]
     return body, tokens
 
 def parse_children(tokens: List[token.Token]) -> Tuple[List[ast.HTMLNode], List[token.Token]]:
+    assert len(tokens) > 0
+
+    if isinstance(tokens[0], token.Variable):
+        # TODO: Should really return the var ast here
+        name, remainder = parse_variable(tokens)
+        return [ast.HTMLNode(tag=name, attrs=[], children=[])], remainder
+
     body, remainder = consume_balanced_token(token.LeftBracket(), token.RightBracket(), tokens)
     nodes = []
     # In this body, parse all nodes.
