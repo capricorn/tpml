@@ -26,3 +26,15 @@ def test_lex_bracket():
 def test_lex_unification():
     input = '[] ='
     assert lex(input) == [ token.LeftBracket(), token.RightBracket(), token.Unification() ]
+
+def test_lex_variable():
+    input = '(Tag,_,_)'
+    assert lex(input) == [
+        token.LeftParen(),
+        token.Variable(name='Tag'),
+        token.CommaDelimiter(),
+        token.Wildcard(),
+        token.CommaDelimiter(),
+        token.Wildcard(),
+        token.RightParen()
+    ]

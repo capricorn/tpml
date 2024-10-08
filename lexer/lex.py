@@ -23,6 +23,10 @@ def unification(input: str) -> bool:
     assert len(input) > 0
     return input[0] == '='
 
+def variable(input: str) -> bool:
+    assert len(input) > 0
+    return (re.match('[A-Z]', input) is not None)
+
 def consume_unification(input: str) -> Tuple[str, token.Token]:
     assert len(input) > 0
     assert input[0] == '='
@@ -57,6 +61,14 @@ def consume_tag(input: str) -> Tuple[str, token.Token]:
     assert tag_str != ''
 
     return (input[idx:], token.TagName(name=tag_str))
+
+def consume_variable(input: str) -> Tuple[str, token.Token]:
+    assert len(input) > 0
+
+    remainder, tag = consume_tag(input.lower())
+    var = token.Variable(name=tag.name.title())
+
+    return remainder, var
 
 def consume_comma(input: str) -> Tuple[str, token.Token]:
     assert len(input) > 0
@@ -95,6 +107,8 @@ def lex(input: str) -> List[token.Token]:
             input, token = consume_bracket(input)
         elif unification(input):
             input, token = consume_unification(input)
+        elif variable(input):
+            input, token = consume_variable(input)
         else:
             raise LexError()
         

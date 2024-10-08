@@ -35,3 +35,7 @@ class RightBracket(Token):
 @dataclass
 class Unification(Token):
     ...
+
+@dataclass
+class Variable(Token):
+    name: str
