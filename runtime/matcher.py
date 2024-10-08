@@ -1,9 +1,12 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from bs4 import BeautifulSoup, Tag
 
 import parser.ast as ast
 from lexer.token import Wildcard
+
+class UnifyException(Exception):
+    ...
 
 def match_bs4(program: ast.HTMLNode, soup: BeautifulSoup) -> List[Tag]:
     matches = []
@@ -13,9 +16,29 @@ def match_bs4(program: ast.HTMLNode, soup: BeautifulSoup) -> List[Tag]:
     
     return matches
 
+# Variables is a str/value dictionary (TODO; some sort of sum type for this)
+# TODO: Enumerate possibities to account for semantics (enums your friend here..?)
+def build_tag(variables, replacement_node: ast.HTMLNode, soup: BeautifulSoup) -> Tag:
+    tag = replacement_node.tag
+    # If the right tag is a variable, set it to the variable's value
+    if replacement_node.variable:
+        tag = variables[tag]
+        if tag is None:
+            raise UnifyException(f'Variable {tag} definition missing.')
+    
+    new_tag = soup.new_tag(tag)
+    # TODO: Attributes (empty for now)
+    #new_tag.insert([])
+    child_tags = [ build_tag(variables, replacement_node=child, soup=soup) for child in replacement_node.children ]
+    new_tag.extend(child_tags)
+
+    return new_tag
+
+
 def unify(unification: ast.NodeUnification, node: Tag, soup: BeautifulSoup) -> Optional[Tag]:
     ''' If the left unification node matches node, replace node with the right unification node. '''
 
+    # A left side match occurs with the node.
     if unification.left.tag == node.name or unification.left.tag == Wildcard.name:
         if unification.right.tag is None:
             node.decompose()
@@ -25,6 +48,7 @@ def unify(unification: ast.NodeUnification, node: Tag, soup: BeautifulSoup) -> O
             new_tag.extend(list(node.children))
             return new_tag
     else:
+        # No left side match so return the node unmodified.
         return node
 
 def unify_tree(unification: ast.NodeUnification, root: Tag, soup: BeautifulSoup) -> Tag:

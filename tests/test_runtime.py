@@ -77,3 +77,21 @@ def test_unify_delete_node():
 
     soup2 = BeautifulSoup(transformed_html, 'html.parser')
     assert soup2.prettify() == new_soup.prettify()
+
+def test_build_tag():
+    rewrite_rule = parse.parse('(p,[],[(X,[],[]),(X,[],[])])')
+    soup = BeautifulSoup('', 'html.parser')
+
+    print(rewrite_rule)
+
+    document = '''
+    <p>
+        <span></span>
+        <span></span>
+    </p>
+    '''
+
+    doc_soup = BeautifulSoup(document, 'html.parser')
+
+    new_tag = matcher.build_tag(variables={'X':'span'}, replacement_node=rewrite_rule, soup=soup)
+    assert new_tag.prettify() == doc_soup.prettify()
