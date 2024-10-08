@@ -62,19 +62,26 @@ def parse_attributes(tokens: List[token.Token]) -> Tuple[List[ast.HTMLAttribute]
     return body, tokens
 
 def parse_children(tokens: List[token.Token]) -> Tuple[List[ast.HTMLNode], List[token.Token]]:
-    # TODO: Correctly parse
-    body, tokens = consume_balanced_token(token.LeftBracket(), token.RightBracket(), tokens)
-    return body, tokens
+    body, remainder = consume_balanced_token(token.LeftBracket(), token.RightBracket(), tokens)
+    nodes = []
+    # In this body, parse all nodes.
+    while body != []:
+        node, body = parse_node(body)
+        nodes.append(node)
+        if body != []:
+            body = parse_comma_delim(body)
+
+    return nodes, remainder
 
 def parse_node(tokens: List[token.Token]) -> Tuple[ast.HTMLNode, List[token.Token]]:
-    body,remainder = consume_balanced_token(token.LeftParen(), token.RightParen(), tokens)
+    body, remainder = consume_balanced_token(token.LeftParen(), token.RightParen(), tokens)
 
     if body == []:
         return ast.HTMLNode(tag=None, attrs=[], children=[]), remainder
 
     tag, body = parse_tag(body)
     body = parse_comma_delim(body)
-    attrs, body = parse_attributes(body)
+    attrs, body = parse_attributes(body)    # [] literal for now.
     body = parse_comma_delim(body)
     children, body = parse_children(body)
 
