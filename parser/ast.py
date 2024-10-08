@@ -11,6 +11,11 @@ class HTMLNode:
     attrs: List[HTMLAttribute]
     children: List['HTMLNode']
 
+    @property
+    def variable(self) -> bool:
+        assert (self.tag is None) or len(self.tag) > 0
+        return self.tag and self.tag[0].isupper()
+
 @dataclass
 class NodeUnification:
     left: HTMLNode

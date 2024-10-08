@@ -40,6 +40,15 @@ def parse_tag(tokens: List[token.Token]) -> Tuple[str, List[token.Token]]:
 
     raise ParseError()
 
+def parse_variable(tokens: List[token.Token]) -> Tuple[str, List[token.Token]]:
+    if len(tokens) == 0:
+        raise ParseError()
+    
+    if isinstance(tokens[0], token.Variable):
+        return (tokens[0].name, tokens[1:])
+
+    raise ParseError()
+
 def parse_comma_delim(tokens: List[token.Token]) -> List[token.Token]:
     if len(tokens) == 0:
         raise ParseError()
@@ -79,7 +88,13 @@ def parse_node(tokens: List[token.Token]) -> Tuple[ast.HTMLNode, List[token.Toke
     if body == []:
         return ast.HTMLNode(tag=None, attrs=[], children=[]), remainder
 
-    tag, body = parse_tag(body)
+    if isinstance(body[0], token.Variable):
+        tag, body = parse_variable(body)
+    elif isinstance(body[0], token.TagName) or isinstance(body[0], token.Wildcard):
+        tag, body = parse_tag(body)
+    else:
+        raise ParseError(f'Expected tag name or variable; got {body[0]}')
+
     body = parse_comma_delim(body)
     attrs, body = parse_attributes(body)    # [] literal for now.
     body = parse_comma_delim(body)

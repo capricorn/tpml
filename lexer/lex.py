@@ -65,7 +65,7 @@ def consume_tag(input: str) -> Tuple[str, token.Token]:
 def consume_variable(input: str) -> Tuple[str, token.Token]:
     assert len(input) > 0
 
-    remainder, tag = consume_tag(input.lower())
+    remainder, tag = consume_tag(input[0].lower() + input[1:])
     var = token.Variable(name=tag.name.title())
 
     return remainder, var
