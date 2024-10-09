@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Tuple
 
 from bs4 import BeautifulSoup, Tag
 
@@ -18,7 +18,8 @@ def match_bs4(program: ast.HTMLNode, soup: BeautifulSoup) -> List[Tag]:
 
 # Variables is a str/value dictionary (TODO; some sort of sum type for this)
 # TODO: Enumerate possibities to account for semantics (enums your friend here..?)
-def build_tag(variables, replacement_node: ast.HTMLNode, soup: BeautifulSoup) -> Tag:
+def build_tag(variables, replacement_node: ast.HTMLNode, soup: BeautifulSoup) -> Tuple[Tag, List[ast.HTMLNode]]:
+    remaining_children = []
     tag = replacement_node.tag
     # If the right tag is a variable, set it to the variable's value
     if replacement_node.variable:
@@ -26,13 +27,24 @@ def build_tag(variables, replacement_node: ast.HTMLNode, soup: BeautifulSoup) ->
         if tag is None:
             raise UnifyException(f'Variable {tag} definition missing.')
     
+    # Handle children as a list or var
     new_tag = soup.new_tag(tag)
     # TODO: Attributes (empty for now)
-    #new_tag.insert([])
-    child_tags = [ build_tag(variables, replacement_node=child, soup=soup) for child in replacement_node.children ]
-    new_tag.extend(child_tags)
+    # Special case where the list is a variable
+    # TODO: Infinite loop since the same children are iterated again
+    if len(replacement_node.children) == 1 and replacement_node.children[0].variable:
+        # TODO: Return future children to iterate here..?
+        # (ie recursively extend a list of 'remaining_children', return it.)
+        new_tag.extend(variables[replacement_node.children[0].tag])
+        remaining_children.extend(variables[replacement_node.children[0].tag])
+    else:
+        child_tags = [ build_tag(variables, replacement_node=child, soup=soup) for child in replacement_node.children ]
+        if child_tags != []:
+            new_tag.extend([ child[0] for child in child_tags ])
+            for child in child_tags:
+                remaining_children.extend(child[1])
 
-    return new_tag
+    return new_tag, remaining_children
 
 def extract_variables(match_rule: ast.HTMLNode, matched_node: Tag) -> Dict:
     vars = dict()
@@ -41,7 +53,7 @@ def extract_variables(match_rule: ast.HTMLNode, matched_node: Tag) -> Dict:
         vars[match_rule.tag] = matched_node.name
 
     if len(match_rule.children) == 1 and match_rule.children[0].variable:
-        vars[match_rule.children[0].tag] = list(matched_node.children)
+        vars[match_rule.children[0].tag] = [ child for child in matched_node.children if isinstance(child, Tag) ]
         return vars
     
     matched_node_children = [ child for child in matched_node.children if isinstance(child, Tag) ]
@@ -52,21 +64,21 @@ def extract_variables(match_rule: ast.HTMLNode, matched_node: Tag) -> Dict:
 
     return vars
 
-def unify(unification: ast.NodeUnification, node: Tag, soup: BeautifulSoup) -> Optional[Tag]:
+def unify(unification: ast.NodeUnification, node: Tag, soup: BeautifulSoup) -> Tuple[Optional[Tag], List[ast.HTMLNode]]:
     ''' If the left unification node matches node, replace node with the right unification node. '''
 
     # A left side match occurs with the node.
     if unification.left.tag == node.name or unification.left.tag == Wildcard.name:
         if unification.right.tag is None:
             node.decompose()
-            return None
+            return (None, [])
         else:
-            new_tag = soup.new_tag(unification.right.tag)
-            new_tag.extend(list(node.children))
+            vars = extract_variables(unification.left, node)
+            new_tag = build_tag(variables=vars, replacement_node=unification.right, soup=soup)
             return new_tag
     else:
         # No left side match so return the node unmodified.
-        return node
+        return (node, [ e for e in node.children if isinstance(e, Tag) ])
 
 def unify_tree(unification: ast.NodeUnification, root: Tag, soup: BeautifulSoup) -> Tag:
     #root = root.replace_with(unify(unification, root, soup=soup))
@@ -74,11 +86,12 @@ def unify_tree(unification: ast.NodeUnification, root: Tag, soup: BeautifulSoup)
 
     while children != []:
         child = children.pop(0)
-        new_child = unify(unification, child, soup=soup)
+        new_child, remainder = unify(unification, child, soup=soup)
         if new_child is None:
             continue
         if child != new_child:
             child.replace_with(new_child)
-        children.extend([ e for e in new_child.children if isinstance(e, Tag) ])
+
+        children.extend(remainder)
     
     return root
