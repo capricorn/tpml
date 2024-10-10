@@ -6,8 +6,8 @@ function variable(name) {
 }
 
 function match(node, matchRule) {
-    if (matchRule.tag == '_' || matchRule.tag == node.tagName) {
-        if (matchRule.children == [] && node.children == []) {
+    if (matchRule.tag == '_' || matchRule.tag == node.tagName.toLowerCase()) {
+        if (matchRule.children.length == 0 && (node.children == undefined || node.children.length == 0)) {
             return true;
         }
 
