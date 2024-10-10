@@ -1,4 +1,22 @@
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-console.log('test');
+function variable(name) {
+    return (name[0] == name[0].toUpperCase()) || name == '_';
+}
+
+function match(node, matchRule) {
+    if (matchRule.tag == '_' || matchRule.tag == node.tagName) {
+        if (matchRule.children == [] && node.children == []) {
+            return true;
+        }
+
+        if (matchRule.children.length == 1 && variable(matchRule.children[0].tag)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+module.exports = { match };
