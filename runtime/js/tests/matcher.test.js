@@ -1,5 +1,5 @@
 import { expect, test, assert } from 'vitest';
-import { match } from '../matcher';
+import { match, unify } from '../matcher';
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
@@ -100,4 +100,30 @@ test('Exact match nested node', () => {
 
     let dom = new JSDOM(doc);
     expect(match(dom.window.document.body, matchRule)).toBe(true);
+});
+
+test('Unify: change tag name', () => {
+    const doc = `
+        <html>
+            <body>
+                <p></p>
+            </body>
+        </html>
+    `;
+
+    const matchRule = {
+        tag: 'p',
+        attrs: [],
+        children: []
+    };
+
+    const rewriteRule = {
+        tag: 'span',
+        attrs: [],
+        children: []
+    };
+
+    let dom = new JSDOM(doc);
+    let result = unify(dom.window.document.body.querySelector('p'), matchRule, rewriteRule, dom.window.document);
+    expect(result.tagName.toLowerCase()).toBe('span');
 });
