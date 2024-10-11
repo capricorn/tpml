@@ -48,3 +48,30 @@ test('Match wildcard tag with children literal', () => {
     // No children so this node matches.
     expect(match(dom.window.document.body.firstChild, matchRule)).toBe(true);
 });
+
+test('Match nested node', () => {
+    const doc = `
+        <html>
+            <body>
+                <p></p>
+                <p></p>
+            </body>
+        </html>
+    `;
+
+    // Match nodes with any tag and no children
+    const matchRule = {
+        tag: "body",
+        attrs: [],
+        children: [
+            {
+                tag: "p",
+                attrs: [],
+                children: []
+            }
+        ]
+    };
+
+    let dom = new JSDOM(doc);
+    expect(match(dom.window.document.body, matchRule)).toBe(true);
+}) ;

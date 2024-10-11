@@ -6,12 +6,29 @@ function variable(name) {
 }
 
 function match(node, matchRule) {
+    console.log(node);
+    console.log(matchRule);
     if (matchRule.tag == '_' || matchRule.tag == node.tagName.toLowerCase()) {
+        // (_,_,[])
         if (matchRule.children.length == 0 && (node.children == undefined || node.children.length == 0)) {
             return true;
         }
 
+        // (_,_,Children)
         if (matchRule.children.length == 1 && variable(matchRule.children[0].tag)) {
+            return true;
+        }
+
+        // Handle nested match rules 
+        // (for now, only a single variable or list of nodes can be present.)
+        if (matchRule.children.length > 0 && node.children.length >= matchRule.children.length) {
+            for (let i = 0; i < matchRule.children.length; i++) {
+                console.log("match on child: " + node.children[i]);
+                if (match(node.children[i], matchRule.children[i]) == false) {
+                    return false
+                }
+            }
+
             return true;
         }
     }
