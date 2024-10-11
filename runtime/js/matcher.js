@@ -6,8 +6,6 @@ function variable(name) {
 }
 
 function match(node, matchRule) {
-    console.log(node);
-    console.log(matchRule);
     if (matchRule.tag == '_' || matchRule.tag == node.tagName.toLowerCase()) {
         // (_,_,[])
         if (matchRule.children.length == 0 && (node.children == undefined || node.children.length == 0)) {
@@ -21,9 +19,8 @@ function match(node, matchRule) {
 
         // Handle nested match rules 
         // (for now, only a single variable or list of nodes can be present.)
-        if (matchRule.children.length > 0 && node.children.length >= matchRule.children.length) {
+        if (matchRule.children.length > 0 && node.children.length == matchRule.children.length) {
             for (let i = 0; i < matchRule.children.length; i++) {
-                console.log("match on child: " + node.children[i]);
                 if (match(node.children[i], matchRule.children[i]) == false) {
                     return false
                 }
