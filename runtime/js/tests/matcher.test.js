@@ -127,3 +127,8 @@ test('Unify: change tag name', () => {
     let result = unify(dom.window.document.body.querySelector('p'), matchRule, rewriteRule, dom.window.document);
     expect(result.tagName.toLowerCase()).toBe('span');
 });
+
+test('Unify: delete node', () => {
+    // TODO: Delete all <p> nodes i.e. (p,[],_) = ()
+    // Above is regardless of child nodes of <p>
+});
