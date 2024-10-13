@@ -1,6 +1,3 @@
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
-
 function variable(name) {
     return (name[0] == name[0].toUpperCase()) || name == '_';
 }
