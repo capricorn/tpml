@@ -53,4 +53,8 @@ function unify(node, matchRule, rewriteRule, document) {
     return element;
 }
 
-module.exports = { match, unify };
+function unify_tree(root_node, matchRule, rewriteRule, document) {
+    console.log('TODO: Unify')
+}
+
+module.exports = { match, unify, unify_tree };

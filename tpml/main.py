@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import parser.parse as parse
 import lexer.lex as lex
 import runtime.matcher as matcher
+from runtime.js import emitter
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -12,7 +13,8 @@ if __name__ == '__main__':
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--html', type=str)
-    group.add_argument('--bookmarklet', action='store_true')
+    group.add_argument('--bookmarklet', action='store_true', help='Generate a bookmarklet.')
+    group.add_argument('--js', action='store_true', help='Generate bundled Javascript.')
 
     args = parser.parse_args()
 
@@ -23,6 +25,8 @@ if __name__ == '__main__':
 
         print(matcher.unify_tree(uni, root=soup, soup=soup).prettify())
     elif args.bookmarklet:
-        ...
+        print(emitter.emit(), end='')
+    elif args.js:
+        print(emitter.emit(prefix=False), end='')
     else:
         parser.print_help()
