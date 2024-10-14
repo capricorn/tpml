@@ -1,4 +1,4 @@
 {{ matcher_js }}
 
 // TODO -- pass serialized rules here.
-unify_tree(null, {}, {}, window.document);
+unify_tree(window.document.documentElement, {{ match_rule }}, {{ rewrite_rule }}, window.document);

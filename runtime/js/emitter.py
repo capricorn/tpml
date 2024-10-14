@@ -1,14 +1,26 @@
 import subprocess
+import orjson
+
 from jinja2 import Template 
 
-def emit(prefix=True):
+from lexer import lex
+from parser import parse
+
+def emit(tpml_rewrite:str, prefix=True):
+
+    tokens = lex.lex(tpml_rewrite)
+    uni = parse.parse_unification(tokens)
+
+    match_rule = orjson.dumps(uni.left).decode('utf8')
+    rewrite_rule = orjson.dumps(uni.right).decode('utf8')
+
     with open('runtime/js/bookmarklet.jinja', 'r') as f:
         emit_template = Template(f.read()) 
     
     with open('runtime/js/matcher.js', 'r') as f:
         matcher_js = f.read()
 
-    bookmarklet_js = emit_template.render(matcher_js=matcher_js)
+    bookmarklet_js = emit_template.render(matcher_js=matcher_js, match_rule=match_rule, rewrite_rule=rewrite_rule)
 
     # TODO: Handle missing esbuild install
     result = subprocess.run(

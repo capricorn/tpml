@@ -25,8 +25,8 @@ if __name__ == '__main__':
 
         print(matcher.unify_tree(uni, root=soup, soup=soup).prettify())
     elif args.bookmarklet:
-        print(emitter.emit(), end='')
+        print(emitter.emit(args.tpml_program), end='')
     elif args.js:
-        print(emitter.emit(prefix=False), end='')
+        print(emitter.emit(args.tpml_program, prefix=False), end='')
     else:
         parser.print_help()
