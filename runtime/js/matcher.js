@@ -1,3 +1,5 @@
+const TEXT_NODE = 3;
+
 function variable(name) {
     return (name[0] == name[0].toUpperCase()) || name == '_';
 }
@@ -8,7 +10,7 @@ function getChildren(node) {
         return [];
     }
 
-    return Array(...node.children).filter((child) => (typeof child) != 'Text');
+    return Array(...node.children).filter((child) => child.nodeType != TEXT_NODE);
 }
 
 function match(node, matchRule) {
