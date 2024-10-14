@@ -49,3 +49,17 @@ def test_parse_nested_unification():
             ]
         )
     )
+
+def test_parse_wildcard_child():
+    node = parse.parse('(b,[],_)')
+    assert node == ast.HTMLNode(
+        tag='b',
+        attrs=[],
+        children=[
+            ast.HTMLNode(
+                tag='_',
+                attrs=[],
+                children=[]
+            )
+        ]
+    )

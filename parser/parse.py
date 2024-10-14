@@ -77,6 +77,10 @@ def parse_children(tokens: List[token.Token]) -> Tuple[List[ast.HTMLNode], List[
         # TODO: Should really return the var ast here
         name, remainder = parse_variable(tokens)
         return [ast.HTMLNode(tag=name, attrs=[], children=[])], remainder
+    # TODO: Should really treat wildcard as a variable
+    elif isinstance(tokens[0], token.Wildcard):
+        name, remainder = parse_tag(tokens)
+        return [ast.HTMLNode(tag=name, attrs=[], children=[])], remainder
 
     body, remainder = consume_balanced_token(token.LeftBracket(), token.RightBracket(), tokens)
     nodes = []
