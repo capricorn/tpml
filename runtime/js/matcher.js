@@ -52,9 +52,8 @@ function unify(node, matchRule, rewriteRule, document) {
 
     // For now, only perform direct tag substitutions
     let element = document.createElement(rewriteRule.tag);
-    element.textContent = node.textContent;
 
-    for (const child of node.children) {
+    for (const child of node.childNodes) {
         element.appendChild(child);
     }
 
