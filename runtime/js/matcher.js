@@ -52,11 +52,27 @@ function unify(node, matchRule, rewriteRule, document) {
 
     // For now, only perform direct tag substitutions
     let element = document.createElement(rewriteRule.tag);
+    element.textContent = node.textContent;
+
+    for (const child of node.children) {
+        element.appendChild(child);
+    }
+
     return [element, getChildren(node)];
 }
 
 function unify_tree(root_node, matchRule, rewriteRule, document) {
-    console.log('TODO: Unify')
+    let children = getChildren(root_node);
+
+    if (match(root_node, matchRule)) {
+        let new_node;
+        [new_node, children] = unify(root_node, matchRule, rewriteRule, document);
+        root_node.replaceWith(new_node);
+    }
+
+    for (const child of children) {
+        unify_tree(child, matchRule, rewriteRule, document);
+    }
 }
 
 module.exports = { match, unify, unify_tree };
