@@ -46,7 +46,7 @@ test('Match wildcard tag with children literal', () => {
     // TODO: Why is this undefined?
     // assert(dom.window.document.body.firstChild.children != undefined);
     // No children so this node matches.
-    expect(match(dom.window.document.body.firstChild, matchRule)).toBe(true);
+    expect(match(dom.window.document.body.querySelector('p'), matchRule)).toBe(true);
 });
 
 test('Fail exact match nested node', () => {
@@ -124,7 +124,8 @@ test('Unify: change tag name', () => {
     };
 
     let dom = new JSDOM(doc);
-    let result = unify(dom.window.document.body.querySelector('p'), matchRule, rewriteRule, dom.window.document);
+    let [result, children] = unify(dom.window.document.body.querySelector('p'), matchRule, rewriteRule, dom.window.document);
+    expect(children.length).toBe(0);
     expect(result.tagName.toLowerCase()).toBe('span');
 });
 

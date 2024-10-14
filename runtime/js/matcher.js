@@ -52,7 +52,7 @@ function unify(node, matchRule, rewriteRule, document) {
 
     // For now, only perform direct tag substitutions
     let element = document.createElement(rewriteRule.tag);
-    return element;
+    return [element, getChildren(node)];
 }
 
 function unify_tree(root_node, matchRule, rewriteRule, document) {
