@@ -5,6 +5,10 @@ class Token():
     ...
 
 @dataclass
+class String(Token):
+    value: str
+
+@dataclass
 class LeftParen(Token):
     ...
 

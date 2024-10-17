@@ -12,6 +12,10 @@ class LexResult():
     remaining_input: str
     token: token.Token
 
+def string(input: str) -> bool:
+    assert len(input) > 0
+    return input[0] == '"'
+
 def tag(input: str) -> bool:
     return (re.match('[a-z]', input) is not None)
 
@@ -26,6 +30,19 @@ def unification(input: str) -> bool:
 def variable(input: str) -> bool:
     assert len(input) > 0
     return (re.match('[A-Z]', input) is not None)
+
+def consume_string(input: str) -> Tuple[str, token.Token]:
+    # 'input' must at least be an empty string
+    assert len(input) >= 2
+    # TODO: Handle escaped quotes 
+    match = re.match(r'"(.*?)"', input)
+    if match is None:
+        raise LexError()
+    
+    remainder = input[match.end(0):]
+    string = token.String(value=match.group(0)[1:-1])
+
+    return (remainder, string)
 
 def consume_unification(input: str) -> Tuple[str, token.Token]:
     assert len(input) > 0
@@ -109,6 +126,8 @@ def lex(input: str) -> List[token.Token]:
             input, token = consume_unification(input)
         elif variable(input):
             input, token = consume_variable(input)
+        elif string(input):
+            input, token = consume_string(input)
         else:
             raise LexError()
         

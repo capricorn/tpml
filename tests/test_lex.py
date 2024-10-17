@@ -38,3 +38,11 @@ def test_lex_variable():
         token.Wildcard(),
         token.RightParen()
     ]
+
+def test_lex_string():
+    input = '( "foo" )'
+    assert lex(input) == [
+        token.LeftParen(),
+        token.String(value='foo'),
+        token.RightParen()
+    ]
