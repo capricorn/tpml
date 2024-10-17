@@ -43,9 +43,9 @@ def variable(input: str) -> bool:
 def consume_brace(input: str) -> Tuple[str, token.Token]:
     match list(input):
         case [ '{', *_ ]:
-            return (input[1:], token.LeftBrace)
+            return (input[1:], token.LeftBrace())
         case [ '}', *_ ]:
-            return (input[1:], token.RightBrace)
+            return (input[1:], token.RightBrace())
     
     raise LexError()
 

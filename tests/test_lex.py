@@ -50,7 +50,7 @@ def test_lex_string():
 def test_lex_braces():
     input = '{ "foo" }'
     assert lex(input) == [
-        token.LeftBrace,
+        token.LeftBrace(),
         token.String(value='foo'),
-        token.RightBrace
+        token.RightBrace()
     ]

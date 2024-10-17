@@ -74,6 +74,27 @@ def consume_unification(tokens: List[token.Token]) -> List[token.Token]:
     
     return tokens[1:]
 
+def parse_set(tokens: List[token.Token]) -> Tuple[ast.Set, List[token.Token]]:
+    body, remainder = consume_balanced_token(left_match=token.LeftBrace(), right_match=token.RightBrace(), tokens=tokens)
+
+    body_types = [ type(token) for token in body ]
+    members = []
+    while body_types != []:
+        match body_types:
+            case [ token.String ]:
+                string, body = parse_string(body)
+                body_types = [ type(tok) for tok in body ]
+                members.append(string)
+            case [ token.String, token.CommaDelimiter, *_ ]:
+                string, body = parse_string(body)
+                body = parse_comma_delim(body)
+                body_types = [ type(tok) for tok in body ]
+                members.append(string)
+            case _:
+                raise ParseError(f'Unexpected sequence when parsing set: {body}')
+
+    return [ast.Set(members=members), remainder]
+    
 def parse_attributes(tokens: List[token.Token]) -> Tuple[List[ast.HTMLAttribute], List[token.Token]]:
     # TODO: Correctly parse
     body, tokens = consume_balanced_token(token.LeftBracket(), token.RightBracket(), tokens)

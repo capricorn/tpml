@@ -6,6 +6,10 @@ class String:
     value: str
 
 @dataclass
+class Set:
+    members: List[String]
+
+@dataclass
 class HTMLAttribute:
     ...
 

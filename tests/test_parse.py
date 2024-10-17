@@ -70,3 +70,28 @@ def test_parse_string():
 
     assert tokens == []
     assert string.value == 'foo'
+
+def test_parse_set_multiple():
+    tokens = lex.lex('{ "foo", "bar" }')
+    ast_set, tokens = parse.parse_set(tokens)
+
+    assert tokens == []
+    assert ast_set == ast.Set(
+        members=[
+            ast.String(value='foo'),
+            ast.String(value='bar')
+        ])
+
+def test_parse_set_single():
+    tokens = lex.lex('{ "foo" }')
+    ast_set, tokens = parse.parse_set(tokens)
+
+    assert tokens == []
+    assert ast_set == ast.Set(members=[ast.String(value='foo')])
+
+def test_parse_set_empty():
+    tokens = lex.lex('{}')
+    ast_set, tokens = parse.parse_set(tokens)
+
+    assert tokens == []
+    assert ast_set == ast.Set(members=[])
