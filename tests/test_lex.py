@@ -46,3 +46,11 @@ def test_lex_string():
         token.String(value='foo'),
         token.RightParen()
     ]
+
+def test_lex_braces():
+    input = '{ "foo" }'
+    assert lex(input) == [
+        token.LeftBrace,
+        token.String(value='foo'),
+        token.RightBrace
+    ]

@@ -29,6 +29,14 @@ class Wildcard(Token):
     name = '_'
 
 @dataclass
+class LeftBrace(Token):
+    ...
+
+@dataclass
+class RightBrace(Token):
+    ...
+
+@dataclass
 class LeftBracket(Token):
     ...
 

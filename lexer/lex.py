@@ -12,6 +12,15 @@ class LexResult():
     remaining_input: str
     token: token.Token
 
+def brace(input: str) -> bool:
+    match list(input):
+        case [ '{', *_ ]:
+            return True
+        case [ '}', *_ ]:
+            return True
+    
+    return False
+
 def string(input: str) -> bool:
     assert len(input) > 0
     return input[0] == '"'
@@ -30,6 +39,15 @@ def unification(input: str) -> bool:
 def variable(input: str) -> bool:
     assert len(input) > 0
     return (re.match('[A-Z]', input) is not None)
+
+def consume_brace(input: str) -> Tuple[str, token.Token]:
+    match list(input):
+        case [ '{', *_ ]:
+            return (input[1:], token.LeftBrace)
+        case [ '}', *_ ]:
+            return (input[1:], token.RightBrace)
+    
+    raise LexError()
 
 def consume_string(input: str) -> Tuple[str, token.Token]:
     # 'input' must at least be an empty string
@@ -128,6 +146,8 @@ def lex(input: str) -> List[token.Token]:
             input, token = consume_variable(input)
         elif string(input):
             input, token = consume_string(input)
+        elif brace(input):
+            input, token = consume_brace(input)
         else:
             raise LexError()
         
