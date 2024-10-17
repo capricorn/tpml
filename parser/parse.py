@@ -31,6 +31,15 @@ def consume_balanced_token(left_match: token.Token, right_match: token.Token, to
     
     return (body, tokens[i+1:])
 
+def parse_string(tokens: List[token.Token]) -> Tuple[ast.String, List[token.Token]]:
+    if len(tokens) == 0:
+        raise ParseError()
+
+    if isinstance(tokens[0], token.String):
+        return [ast.String(value=tokens[0].value), tokens[1:]]
+
+    raise ParseError()
+
 def parse_tag(tokens: List[token.Token]) -> Tuple[str, List[token.Token]]:
     if len(tokens) == 0:
         raise ParseError()

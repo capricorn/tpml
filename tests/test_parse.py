@@ -63,3 +63,10 @@ def test_parse_wildcard_child():
             )
         ]
     )
+
+def test_parse_string():
+    tokens = lex.lex('"foo"')
+    string, tokens = parse.parse_string(tokens)
+
+    assert tokens == []
+    assert string.value == 'foo'
