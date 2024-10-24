@@ -64,6 +64,13 @@ def test_parse_wildcard_child():
         ]
     )
 
+def test_parse_ellipsis():
+    tokens = lex.lex('...')
+    ellipsis, tokens = parse.parse_ellipsis(tokens)
+
+    assert tokens == []
+    assert isinstance(ellipsis, ast.Ellipsis)
+
 def test_parse_string():
     tokens = lex.lex('"foo"')
     string, tokens = parse.parse_string(tokens)

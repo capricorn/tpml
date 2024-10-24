@@ -6,6 +6,10 @@ class String:
     value: str
 
 @dataclass
+class Ellipsis:
+    ...
+
+@dataclass
 class Set:
     members: List[String]
 

@@ -12,7 +12,7 @@ class LexResult():
     remaining_input: str
     token: token.Token
 
-def ellipses(input: str) -> bool:
+def ellipsis(input: str) -> bool:
     return input[:3] == '...'
 
 def brace(input: str) -> bool:
@@ -43,9 +43,9 @@ def variable(input: str) -> bool:
     assert len(input) > 0
     return (re.match('[A-Z]', input) is not None)
 
-def consume_ellipses(input: str) -> Tuple[str, token.Token]:
+def consume_ellipsis(input: str) -> Tuple[str, token.Token]:
     assert len(input) >= 3
-    return (input[3:], token.Ellipses())
+    return (input[3:], token.Ellipsis())
 
 def consume_brace(input: str) -> Tuple[str, token.Token]:
     match list(input):
@@ -155,8 +155,8 @@ def lex(input: str) -> List[token.Token]:
             input, token = consume_string(input)
         elif brace(input):
             input, token = consume_brace(input)
-        elif ellipses(input):
-            input, token = consume_ellipses(input)
+        elif ellipsis(input):
+            input, token = consume_ellipsis(input)
         else:
             raise LexError()
         

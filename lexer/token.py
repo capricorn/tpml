@@ -5,7 +5,7 @@ class Token():
     ...
 
 @dataclass
-class Ellipses(Token):
+class Ellipsis(Token):
     ...
 
 @dataclass

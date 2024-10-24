@@ -31,6 +31,15 @@ def consume_balanced_token(left_match: token.Token, right_match: token.Token, to
     
     return (body, tokens[i+1:])
 
+def parse_ellipsis(tokens: List[token.Token]) -> Tuple[ast.Ellipsis, List[token.Token]]:
+    if len(tokens) == 0:
+        raise ParseError()
+
+    if isinstance(tokens[0], token.Ellipsis):
+        return [ast.Ellipsis(), tokens[1:]]
+    
+    raise ParseError()
+
 def parse_string(tokens: List[token.Token]) -> Tuple[ast.String, List[token.Token]]:
     if len(tokens) == 0:
         raise ParseError()

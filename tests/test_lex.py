@@ -59,6 +59,6 @@ def test_lex_ellipses():
     input = '{ ... }'
     assert lex(input) == [
         token.LeftBrace(),
-        token.Ellipses(),
+        token.Ellipsis(),
         token.RightBrace()
     ]
