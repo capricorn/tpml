@@ -54,3 +54,11 @@ def test_lex_braces():
         token.String(value='foo'),
         token.RightBrace()
     ]
+
+def test_lex_ellipses():
+    input = '{ ... }'
+    assert lex(input) == [
+        token.LeftBrace(),
+        token.Ellipses(),
+        token.RightBrace()
+    ]

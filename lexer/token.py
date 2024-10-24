@@ -5,6 +5,10 @@ class Token():
     ...
 
 @dataclass
+class Ellipses(Token):
+    ...
+
+@dataclass
 class String(Token):
     value: str
 
