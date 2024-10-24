@@ -13,6 +13,26 @@ function getChildren(node) {
     return Array(...node.children).filter((child) => child.nodeType != TEXT_NODE);
 }
 
+function matchSet(jsSet, setMatchRule) {
+    // If setMatchRule contains 'nodeType: ellipsis' then it's a fuzzy match
+    // Otherwise, strict set equality
+    let fuzzyMatch = (setMatchRule.members.filter(m => m.nodeType == 'ellipsis').length > 0);
+    if (fuzzyMatch) {
+        let members = new Set(setMatchRule.members
+            .filter(m => m.nodeType != 'ellipsis')
+            .map(m => m.value)); // All values in this case should be strings
+
+        // The js set should at least include all of the members (ie a superset of the match rule)
+        return members.isSubsetOf(jsSet);
+    } else {
+        let members = new Set(setMatchRule.members
+            .map(m => m.value)); // All values in this case should be strings
+
+        // Strict equality
+        return (jsSet.difference(members).size == 0);
+    }
+}
+
 function match(node, matchRule) {
     if (matchRule.tag == '_' || matchRule.tag == node.tagName.toLowerCase()) {
         let nodeChildren = getChildren(node);
@@ -74,4 +94,4 @@ function unify_tree(root_node, matchRule, rewriteRule, document) {
     }
 }
 
-module.exports = { match, unify, unify_tree };
+module.exports = { match, matchSet, unify, unify_tree };

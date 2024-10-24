@@ -1,5 +1,5 @@
 import { expect, test, assert } from 'vitest';
-import { match, unify, unify_tree } from '../matcher';
+import { match, matchSet, unify, unify_tree } from '../matcher';
 import { html_beautify } from 'js-beautify';
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -205,6 +205,32 @@ test('unify_tree: bold to italic', () => {
 
     expect(beautify(transformedDoc)).toBe(beautify(result));
 })
+
+test('Set matching success: fuzzy', () => {
+    let jsSet = new Set(['foo', 'bar']);
+    let setMatchRule = {
+        nodeType: 'set',
+        members: [
+            { nodeType: 'string', value: 'foo' },
+            { nodeType: 'ellipsis' }
+        ]
+    };
+
+    expect(matchSet(jsSet, setMatchRule)).toBe(true);
+});
+
+test('Set matching success: strict', () => {
+    let jsSet = new Set(['foo', 'bar']);
+    let setMatchRule = {
+        nodeType: 'set',
+        members: [
+            { nodeType: 'string', value: 'foo' },
+            { nodeType: 'string', value: 'bar' },
+        ]
+    };
+
+    expect(matchSet(jsSet, setMatchRule)).toBe(true);
+});
 
 test('Unify: delete node', () => {
     // TODO: Delete all <p> nodes i.e. (p,[],_) = ()
