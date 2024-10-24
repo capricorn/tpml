@@ -94,11 +94,20 @@ def parse_set(tokens: List[token.Token]) -> Tuple[ast.Set, List[token.Token]]:
                 string, body = parse_string(body)
                 body_types = [ type(tok) for tok in body ]
                 members.append(string)
+            case [ token.Ellipsis ]:
+                ellipsis, body = parse_ellipsis(body)
+                body_types = [ type(tok) for tok in body ]
+                members.append(ellipsis)
             case [ token.String, token.CommaDelimiter, *_ ]:
                 string, body = parse_string(body)
                 body = parse_comma_delim(body)
                 body_types = [ type(tok) for tok in body ]
                 members.append(string)
+            case [ token.Ellipsis, token.CommaDelimiter, *_ ]:
+                ellipsis, body = parse_ellipsis(body)
+                body = parse_comma_delim(body)
+                body_types = [ type(tok) for tok in body ]
+                members.append(ellipsis)
             case _:
                 raise ParseError(f'Unexpected sequence when parsing set: {body}')
 

@@ -102,3 +102,21 @@ def test_parse_set_empty():
 
     assert tokens == []
     assert ast_set == ast.Set(members=[])
+
+def test_parse_set_ellipsis_single():
+    tokens = lex.lex('{ ... }')
+    ast_set, tokens = parse.parse_set(tokens)
+
+    assert tokens == []
+    assert ast_set == ast.Set(members=[ast.Ellipsis()])
+
+def test_parse_set_ellipsis_multiple():
+    tokens = lex.lex('{ ..., "foo", "bar" }')
+    ast_set, tokens = parse.parse_set(tokens)
+
+    assert tokens == []
+    assert ast_set == ast.Set(members=[
+        ast.Ellipsis(),
+        ast.String(value='foo'),
+        ast.String(value='bar')
+    ])

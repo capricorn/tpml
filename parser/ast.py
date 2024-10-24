@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from dataclasses import dataclass
 
 @dataclass
@@ -11,7 +11,7 @@ class Ellipsis:
 
 @dataclass
 class Set:
-    members: List[String]
+    members: List[Union[String, Ellipsis]]
 
 @dataclass
 class HTMLAttribute:
