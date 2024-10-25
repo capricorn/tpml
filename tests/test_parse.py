@@ -129,3 +129,10 @@ def test_parse_dict_single_strings_only():
     assert ast_dict == ast.Dict(members=[
         (ast.String(value='foo'), ast.String(value='bar'))
     ])
+
+def test_parse_dict_empty():
+    tokens = lex.lex('{}')
+    ast_dict, tokens = parse.parse_dict(tokens)
+
+    assert tokens == []
+    assert ast_dict == ast.Dict(members=[])
