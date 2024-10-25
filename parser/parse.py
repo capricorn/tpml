@@ -4,6 +4,10 @@ from parser import ast
 from lexer import lex
 from lexer import token
 
+DictValue = Union[ast.String, ast.Wildcard, ast.Set]
+DictKey = ast.String
+DictEntry = Union[ast.Ellipsis, Tuple[DictKey, DictValue]]
+
 class ParseError(Exception):
     ...
 
@@ -130,10 +134,10 @@ def parse_set(tokens: List[token.Token]) -> Tuple[ast.Set, List[token.Token]]:
 
     return [ast.Set(members=members), remainder]
 
-def parse_dict_key(tokens: List[token.Token]) -> Tuple[ast.String, List[token.Token]]:
+def parse_dict_key(tokens: List[token.Token]) -> Tuple[DictKey, List[token.Token]]:
     return parse_string(tokens)
 
-def parse_dict_value(tokens: List[token.Token]) -> Tuple[Union[ast.String, ast.Wildcard, ast.Set], List[token.Token]]:
+def parse_dict_value(tokens: List[token.Token]) -> Tuple[DictValue, List[token.Token]]:
     try:
         return parse_string(tokens)
     except ParseError:
@@ -151,16 +155,29 @@ def parse_dict_value(tokens: List[token.Token]) -> Tuple[Union[ast.String, ast.W
     
     raise ParseError(f'Failed to parse dict value from tokens {tokens}')
 
+def parse_dict_entry(tokens: List[token.Token]) -> Tuple[DictEntry, List[token.Token]]:
+    try:
+        return parse_ellipsis(tokens)
+    except:
+        ...
+
+    try:
+        key, tokens = parse_dict_key(tokens)
+        tokens = parse_colon(tokens)
+        value, tokens = parse_dict_value(tokens)
+        return ((key,value), tokens)
+    except:
+        ...
+
+    raise ParseError(f'Failed to parse dict entry from tokens {tokens}')
+
 def parse_dict(tokens: List[token.Token]) -> Tuple[ast.Dict, List[token.Token]]:
     body, remainder = consume_balanced_token(left_match=token.LeftBrace(), right_match=token.RightBrace(), tokens=tokens)
     values = []
 
     while body != []:
-        key, body = parse_dict_key(body)
-        body = parse_colon(body)
-        value, body = parse_dict_value(body)
-        
-        values.append((key, value))
+        val, body = parse_dict_entry(body)
+        values.append(val)
 
         if body != []:
             body = parse_comma_delim(body)

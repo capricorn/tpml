@@ -177,3 +177,13 @@ def test_parse_dict_wildcard_value():
     assert ast_dict == ast.Dict(members=[
         (ast.String(value='foo'), ast.Wildcard())
     ])
+
+def test_parse_fuzzy_dict():
+    tokens = lex.lex('{ "foo": "bar", ... }')
+    ast_dict, tokens = parse.parse_dict(tokens)
+
+    assert tokens == []
+    assert ast_dict == ast.Dict(members=[
+        (ast.String(value='foo'), ast.String(value='bar')),
+        ast.Ellipsis()
+    ])
