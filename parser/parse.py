@@ -133,6 +133,14 @@ def parse_dict(tokens: List[token.Token]) -> Tuple[ast.Dict, List[token.Token]]:
                 body = parse_colon(body)
                 value, body = parse_string(body)
                 values.append((key,value))
+            case [token.String, token.Colon, token.String, token.CommaDelimiter, _, *_]:
+                key, body = parse_string(body)
+                body = parse_colon(body)
+                value, body = parse_string(body)
+                body = parse_comma_delim(body)
+                values.append((key,value))
+            case _:
+                raise ParseError(f'Unexpected sequence when parsing dict: {body}')
         
         body_types = [ type(tok) for tok in body ]
     

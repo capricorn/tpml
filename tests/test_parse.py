@@ -136,3 +136,13 @@ def test_parse_dict_empty():
 
     assert tokens == []
     assert ast_dict == ast.Dict(members=[])
+
+def test_parse_dict_multiple_strings_only():
+    tokens = lex.lex('{ "foo": "bar", "baz": "qux" }')
+    ast_dict, tokens = parse.parse_dict(tokens)
+
+    assert tokens == []
+    assert ast_dict == ast.Dict(members=[
+        (ast.String(value='foo'), ast.String(value='bar')),
+        (ast.String(value='baz'), ast.String(value='qux')),
+    ])
