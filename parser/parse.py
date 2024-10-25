@@ -83,14 +83,14 @@ def parse_colon(tokens: List[token.Token]) -> List[token.Token]:
     
     return tokens[1:]
 
-def parse_wildcard(tokens: List[token.Token]) -> List[token.Token]:
+def parse_wildcard(tokens: List[token.Token]) -> Tuple[ast.Wildcard, List[token.Token]]:
     if tokens == []:
         raise ParseError('Failed to parse wildcard: empty token list.')
     
     if type(tokens[0]) != token.Wildcard:
         raise ParseError(f'Failed to parse wildcard: bad token {tokens[0]}')
     
-    return tokens[1:]
+    return (ast.Wildcard(), tokens[1:])
 
 def consume_unification(tokens: List[token.Token]) -> List[token.Token]:
     if len(tokens) == 0:

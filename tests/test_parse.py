@@ -168,3 +168,12 @@ def test_parse_dict_trailing_comma_failure():
         return
     
     pytest.fail('Expected ParseError')
+
+def test_parse_dict_wildcard_value():
+    tokens = lex.lex('{ "foo": _ }')
+    ast_dict, tokens = parse.parse_dict(tokens)
+
+    assert tokens == []
+    assert ast_dict == ast.Dict(members=[
+        (ast.String(value='foo'), ast.Wildcard())
+    ])
