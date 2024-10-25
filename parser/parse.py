@@ -133,6 +133,15 @@ def parse_dict(tokens: List[token.Token]) -> Tuple[ast.Dict, List[token.Token]]:
                 body = parse_colon(body)
                 value, body = parse_string(body)
                 values.append((key,value))
+            case [token.String, token.Colon, token.LeftBrace, _, *_]:
+                # TODO: Different pattern matching lib to handle this
+                key, body = parse_string(body)
+                body = parse_colon(body)
+                value_set, body = parse_set(body)
+                values.append((key, value_set))
+
+                if len(body) > 1 and type(body[0]) == token.CommaDelimiter:
+                    body = parse_comma_delim(body)
             case [token.String, token.Colon, token.String, token.CommaDelimiter, _, *_]:
                 key, body = parse_string(body)
                 body = parse_colon(body)

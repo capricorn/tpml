@@ -146,3 +146,13 @@ def test_parse_dict_multiple_strings_only():
         (ast.String(value='foo'), ast.String(value='bar')),
         (ast.String(value='baz'), ast.String(value='qux')),
     ])
+
+def test_parse_dict_set_value():
+    tokens = lex.lex('{ "foo": { "bar", "baz" }, "qux": "fred" }')
+    ast_dict, tokens = parse.parse_dict(tokens)
+
+    assert tokens == []
+    assert ast_dict == ast.Dict(members=[
+        (ast.String(value='foo'), ast.Set(members=[ast.String(value='bar'), ast.String(value='baz')])),
+        (ast.String(value='qux'), ast.String(value='fred'))
+    ])
