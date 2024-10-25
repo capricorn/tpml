@@ -12,6 +12,9 @@ class LexResult():
     remaining_input: str
     token: token.Token
 
+def colon(input: str) -> bool:
+    return input[:1] == ':'
+
 def ellipsis(input: str) -> bool:
     return input[:3] == '...'
 
@@ -42,6 +45,10 @@ def unification(input: str) -> bool:
 def variable(input: str) -> bool:
     assert len(input) > 0
     return (re.match('[A-Z]', input) is not None)
+
+def consume_colon(input: str) -> Tuple[str, token.Token]:
+    assert len(input) >= 1
+    return (input[1:], token.Colon())
 
 def consume_ellipsis(input: str) -> Tuple[str, token.Token]:
     assert len(input) >= 3
@@ -157,6 +164,8 @@ def lex(input: str) -> List[token.Token]:
             input, token = consume_brace(input)
         elif ellipsis(input):
             input, token = consume_ellipsis(input)
+        elif colon(input):
+            input, token = consume_colon(input)
         else:
             raise LexError()
         

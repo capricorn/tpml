@@ -5,6 +5,10 @@ class Token():
     ...
 
 @dataclass
+class Colon(Token):
+    ...
+
+@dataclass
 class Ellipsis(Token):
     ...
 
