@@ -120,3 +120,12 @@ def test_parse_set_ellipsis_multiple():
         ast.String(value='foo'),
         ast.String(value='bar')
     ])
+
+def test_parse_dict_single_strings_only():
+    tokens = lex.lex('{ "foo": "bar" }')
+    ast_dict, tokens = parse.parse_dict(tokens)
+
+    assert tokens == []
+    assert ast_dict == ast.Dict(members=[
+        (ast.String(value='foo'), ast.String(value='bar'))
+    ])

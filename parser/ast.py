@@ -1,4 +1,4 @@
-from typing import List, Optional, Union, ClassVar
+from typing import List, Optional, Union, Tuple
 from dataclasses import dataclass, field
 from enum import StrEnum
 
@@ -22,6 +22,11 @@ class Ellipsis:
 class Set:
     members: List[Union[String, Ellipsis]]
     nodeType: str = ASTNodeType.SET.value
+
+@dataclass
+class Dict:
+    # TODO: Support wildcard values (& perhaps key wildcard as well)
+    members: List[Union[Ellipsis, Tuple[String, Union[String,Set]]]]
 
 @dataclass
 class HTMLAttribute:

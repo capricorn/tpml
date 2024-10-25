@@ -75,6 +75,14 @@ def parse_comma_delim(tokens: List[token.Token]) -> List[token.Token]:
     
     return tokens[1:]
 
+def parse_colon(tokens: List[token.Token]) -> List[token.Token]:
+    if len(tokens) == 0:
+        raise ParseError('Expected colon')
+    if not isinstance(tokens[0], token.Colon):
+        raise ParseError('Expected colon')
+    
+    return tokens[1:]
+
 def consume_unification(tokens: List[token.Token]) -> List[token.Token]:
     if len(tokens) == 0:
         raise ParseError()
@@ -112,6 +120,23 @@ def parse_set(tokens: List[token.Token]) -> Tuple[ast.Set, List[token.Token]]:
                 raise ParseError(f'Unexpected sequence when parsing set: {body}')
 
     return [ast.Set(members=members), remainder]
+
+def parse_dict(tokens: List[token.Token]) -> Tuple[ast.Dict, List[token.Token]]:
+    body, remainder = consume_balanced_token(left_match=token.LeftBrace(), right_match=token.RightBrace(), tokens=tokens)
+    body_types = [ type(tok) for tok in body ]
+    values = []
+
+    while body_types != []:
+        match body_types:
+            case [token.String, token.Colon, token.String]:
+                key, body = parse_string(body)
+                body = parse_colon(body)
+                value, body = parse_string(body)
+                values.append((key,value))
+        
+        body_types = [ type(tok) for tok in body ]
+    
+    return (ast.Dict(members=values), remainder)
     
 def parse_attributes(tokens: List[token.Token]) -> Tuple[List[ast.HTMLAttribute], List[token.Token]]:
     # TODO: Correctly parse
