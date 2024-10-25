@@ -8,6 +8,11 @@ class ASTNodeType(StrEnum):
     SET = 'set'
     NODE = 'node'
     UNIFICATION = 'unification'
+    WILDCARD = 'wildcard'
+
+@dataclass
+class Wildcard:
+    nodeType: str = ASTNodeType.WILDCARD.value
 
 @dataclass
 class String:

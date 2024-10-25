@@ -83,6 +83,15 @@ def parse_colon(tokens: List[token.Token]) -> List[token.Token]:
     
     return tokens[1:]
 
+def parse_wildcard(tokens: List[token.Token]) -> List[token.Token]:
+    if tokens == []:
+        raise ParseError('Failed to parse wildcard: empty token list.')
+    
+    if type(tokens[0]) != token.Wildcard:
+        raise ParseError(f'Failed to parse wildcard: bad token {tokens[0]}')
+    
+    return tokens[1:]
+
 def consume_unification(tokens: List[token.Token]) -> List[token.Token]:
     if len(tokens) == 0:
         raise ParseError()
@@ -121,37 +130,42 @@ def parse_set(tokens: List[token.Token]) -> Tuple[ast.Set, List[token.Token]]:
 
     return [ast.Set(members=members), remainder]
 
+def parse_dict_key(tokens: List[token.Token]) -> Tuple[ast.String, List[token.Token]]:
+    return parse_string(tokens)
+
+def parse_dict_value(tokens: List[token.Token]) -> Tuple[Union[ast.String, ast.Wildcard, ast.Set], List[token.Token]]:
+    try:
+        return parse_string(tokens)
+    except ParseError:
+        ...
+    
+    try:
+        return parse_wildcard(tokens)
+    except ParseError:
+        ...
+    
+    try:
+        return parse_set(tokens)
+    except ParseError:
+        ...
+    
+    raise ParseError(f'Failed to parse dict value from tokens {tokens}')
+
 def parse_dict(tokens: List[token.Token]) -> Tuple[ast.Dict, List[token.Token]]:
     body, remainder = consume_balanced_token(left_match=token.LeftBrace(), right_match=token.RightBrace(), tokens=tokens)
-    body_types = [ type(tok) for tok in body ]
     values = []
 
-    while body_types != []:
-        match body_types:
-            case [token.String, token.Colon, token.String]:
-                key, body = parse_string(body)
-                body = parse_colon(body)
-                value, body = parse_string(body)
-                values.append((key,value))
-            case [token.String, token.Colon, token.LeftBrace, _, *_]:
-                # TODO: Different pattern matching lib to handle this
-                key, body = parse_string(body)
-                body = parse_colon(body)
-                value_set, body = parse_set(body)
-                values.append((key, value_set))
-
-                if len(body) > 1 and type(body[0]) == token.CommaDelimiter:
-                    body = parse_comma_delim(body)
-            case [token.String, token.Colon, token.String, token.CommaDelimiter, _, *_]:
-                key, body = parse_string(body)
-                body = parse_colon(body)
-                value, body = parse_string(body)
-                body = parse_comma_delim(body)
-                values.append((key,value))
-            case _:
-                raise ParseError(f'Unexpected sequence when parsing dict: {body}')
+    while body != []:
+        key, body = parse_dict_key(body)
+        body = parse_colon(body)
+        value, body = parse_dict_value(body)
         
-        body_types = [ type(tok) for tok in body ]
+        values.append((key, value))
+
+        if body != []:
+            body = parse_comma_delim(body)
+            if body == []:
+                raise ParseError('Failed to parse dict: trailing comma')
     
     return (ast.Dict(members=values), remainder)
     
