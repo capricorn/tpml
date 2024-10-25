@@ -1,3 +1,5 @@
+import pytest
+
 from parser import ast
 from parser import parse
 from lexer import lex
@@ -156,3 +158,13 @@ def test_parse_dict_set_value():
         (ast.String(value='foo'), ast.Set(members=[ast.String(value='bar'), ast.String(value='baz')])),
         (ast.String(value='qux'), ast.String(value='fred'))
     ])
+
+def test_parse_dict_trailing_comma_failure():
+    tokens = lex.lex('{ "foo": "bar", }')
+
+    try:
+        parse.parse_dict(tokens)
+    except parse.ParseError:
+        return
+    
+    pytest.fail('Expected ParseError')
