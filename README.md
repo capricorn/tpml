@@ -64,6 +64,10 @@ javascript:(()=>{var s=(e,r)=>()=>(r||e((r={exports:{}}).exports,r),r.exports);v
 Strings are double-quoted as seen in many other programming languages, e.g. `"foo"`, `"bar"`. They currently do _not_ support
 nested quotes (string escapes are unimplemented.)
 
+## Variables
+
+A variable is any alphanumeric sequence beginning with the regex `[A-Z]`. Examples: `Foo`, `Bar`.
+
 ## Set patterns
 
 A set consists of curly braces and elements delimited by a comma. The valid elements are: strings, `_`, `...`. For example, 
