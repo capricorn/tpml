@@ -53,7 +53,11 @@ javascript:(()=>{var s=(e,r)=>()=>(r||e((r={exports:{}}).exports,r),r.exports);v
 
 ## Special notation
 
+### Sets
+
 `A <= B` means `A` subset of `B`.
+`|A|` is set cardinality.
+`A = B` is set equality.
 
 ## Strings
 
@@ -93,3 +97,15 @@ match({...}, {"baz"})    ; true
 An ellipsis may occur multiple times in a set; any extras are effectively ignored.
 
 ### Wildcard set matching
+
+If `_` occurs in a set, it guarantees that there must at least exist an element to occupy its slot.
+This item _is_ allowed to occur multiple times in a set; it effectively encodes a _size_ requirement of
+the set. For example:
+
+```
+match({_,_},{"foo","bar"})  ; true
+match({_,_},{"foo"})    ; false
+match({_,"baz"}, {"baz","bar"}) ; true
+```
+
+That is, `match(SetPattern,Set) := (SetPattern-{_}) <= Set AND |(SetPattern-{_})| = |Set|`
