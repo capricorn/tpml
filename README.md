@@ -78,3 +78,18 @@ Some examples:
 match({"foo","bar"},{"foo","bar"}) ; true.
 match({"baz"},{"foo"}) ; false.
 ```
+
+### Fuzzy set matching
+
+If a set contains `...` as an element it is treated as a _fuzzy_ set. The pattern set is then matched using `<=` rather than `=`; 
+that is `match(SetPattern,Set) := (SetPattern-{...}) <= Set`. For example:
+
+```
+match({"foo",...}, {"foo","bar"})   ; true
+match({...}, {})    ; true
+match({...}, {"baz"})    ; true
+```
+
+An ellipsis may occur multiple times in a set; any extras are effectively ignored.
+
+### Wildcard set matching
