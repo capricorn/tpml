@@ -59,6 +59,17 @@ javascript:(()=>{var s=(e,r)=>()=>(r||e((r={exports:{}}).exports,r),r.exports);v
 `|A|` is set cardinality.
 `A = B` is set equality.
 
+### Lists
+
+Lists are zero-indexed.
+
+`L[k]` returns the value at index $k$.
+`L[k:]` slices the list to include all elements on and after index `k`. 
+`L[:k]` slices the list to include all elements up to but excluding index `k`. 
+`|L|` is the list length.
+
+Any negative $k$ indexes as `|L|+k`; `L[-1] = L[|L|-1]`, etc.
+
 ## Strings
 
 Strings are double-quoted as seen in many other programming languages, e.g. `"foo"`, `"bar"`. They currently do _not_ support
@@ -113,3 +124,36 @@ match({_,"baz"}, {"baz","bar"}) ; true
 ```
 
 That is, `match(SetPattern,Set) := (SetPattern-{_}) <= Set AND |(SetPattern-{_})| = |Set|`
+
+## List patterns
+
+Lists consist of square brackets containing comma-delimited elements. For example, `["foo", "bar"]`. They work just like
+tuples in mathematics: duplicate elements are allowed and order matters. Matching is described with for strings. 
+
+### Strict list matching
+
+A list that contains only strings matches on order and length:
+
+```
+match(["foo","bar"], ["foo","bar"]) ; true
+match(["foo","bar"], ["foo"])   ; false
+```
+
+In this case `match(ListPattern,List) := ListPattern = List`.
+
+### Fuzzy list matching
+
+A list that contains `...` is a fuzzy list. This is currently defined if `...` occurs as the first or last element of a list; that is,
+as a suffix or prefix match:
+
+```
+match([...,"foo"], ["bar","baz","foo"]) ; true
+match(["baz",...], ["baz"]) ; true
+```
+
+If `ListPattern[0] = ...`, then: `match(ListPattern,List) := ListPattern[1:] = List`
+If `ListPattern[-1] = ...`, then: `match(ListPattern,List) := ListPattern[:-1] = List`
+
+### Wildcard list matching
+
+### Variable list matching
