@@ -5,10 +5,10 @@ from parser import parse
 from lexer import lex
 
 def test_parse_node():
-    assert parse.parse('(p,[],[])') == ast.HTMLNode(tag='p', attrs=[], children=[])
+    assert parse.parse('(p,{},[])') == ast.HTMLNode(tag='p', attrs=[], children=[])
 
 def test_parse_unification():
-    tokens = lex.lex('(p,[],[]) = (span,[],[])')
+    tokens = lex.lex('(p,{},[]) = (span,{},[])')
     uni = parse.parse_unification(tokens)
     assert uni == ast.NodeUnification(
         left=ast.HTMLNode(tag='p', attrs=[], children=[]),
@@ -18,7 +18,7 @@ def test_parse_empty_node():
     assert parse.parse('()') == ast.HTMLNode(tag=None, attrs=[], children=[])
 
 def test_parse_nested_nodes():
-    assert parse.parse('(p,[],[(div,[],[])])') == ast.HTMLNode(
+    assert parse.parse('(p,{},[(div,{},[])])') == ast.HTMLNode(
         tag='p',
         attrs=[],
         children=[
@@ -30,7 +30,7 @@ def test_parse_nested_nodes():
         ])
 
 def test_parse_nested_unification():
-    tokens = lex.lex('(p,[],[]) = (p,[],[(span,[],[])])')
+    tokens = lex.lex('(p,{},[]) = (p,{},[(span,{},[])])')
     uni = parse.parse_unification(tokens)
 
     assert uni == ast.NodeUnification(
@@ -53,7 +53,7 @@ def test_parse_nested_unification():
     )
 
 def test_parse_wildcard_child():
-    node = parse.parse('(b,[],_)')
+    node = parse.parse('(b,{},_)')
     assert node == ast.HTMLNode(
         tag='b',
         attrs=[],
