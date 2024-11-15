@@ -27,6 +27,9 @@ def brace(input: str) -> bool:
     
     return False
 
+def filter(input: str) -> bool:
+    return input[:len(token.Filter.Type.ANY_DEPTH_SUBTREE_MATCH)] == token.Filter.Type.ANY_DEPTH_SUBTREE_MATCH
+
 def string(input: str) -> bool:
     assert len(input) > 0
     return input[0] == '"'
@@ -45,6 +48,12 @@ def unification(input: str) -> bool:
 def variable(input: str) -> bool:
     assert len(input) > 0
     return (re.match('[A-Z]', input) is not None)
+
+def consume_filter(input: str) -> Tuple[str, token.Token]:
+    if (filter := input[:len(token.Filter.Type.ANY_DEPTH_SUBTREE_MATCH)]) == token.Filter.Type.ANY_DEPTH_SUBTREE_MATCH:
+        return (input[len(filter):], token.Filter(filterType=token.Filter.Type.ANY_DEPTH_SUBTREE_MATCH))
+
+    assert False, f'Unsupported filter: {input}'
 
 def consume_colon(input: str) -> Tuple[str, token.Token]:
     assert len(input) >= 1
@@ -166,6 +175,8 @@ def lex(input: str) -> List[token.Token]:
             input, token = consume_ellipsis(input)
         elif colon(input):
             input, token = consume_colon(input)
+        elif filter(input):
+            input, token = consume_filter(input)
         else:
             raise LexError()
         

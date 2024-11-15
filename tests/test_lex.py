@@ -72,3 +72,9 @@ def test_lex_colon():
         token.String(value='bar'),
         token.RightBrace()
     ]
+
+def test_lex_any_subtree_filter():
+    input = '..>'
+    assert lex(input) == [
+        token.Filter(filterType=token.Filter.Type.ANY_DEPTH_SUBTREE_MATCH)
+    ]

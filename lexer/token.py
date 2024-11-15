@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import StrEnum
 
 @dataclass
 class Token():
@@ -59,3 +60,10 @@ class Unification(Token):
 @dataclass
 class Variable(Token):
     name: str
+
+@dataclass
+class Filter(Token):
+    class Type(StrEnum):
+        ANY_DEPTH_SUBTREE_MATCH = '..>'
+
+    filterType: str
