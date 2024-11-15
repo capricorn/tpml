@@ -187,3 +187,16 @@ def test_parse_fuzzy_dict():
         (ast.String(value='foo'), ast.String(value='bar')),
         ast.Ellipsis()
     ])
+
+def test_parse_any_subtree_op():
+    tokens = lex.lex('..> (div,{},[])')
+    ast_filter, tokens = parse.parse_binary_op(tokens)
+    assert tokens == []
+    assert ast_filter == ast.BinaryFilter(
+        filter_type=lex.token.Filter.Type.ANY_DEPTH_SUBTREE_MATCH,
+        right_arg=ast.HTMLNode(
+            tag='div',
+            attrs=[],
+            children=[],
+        )
+    )

@@ -188,7 +188,7 @@ def parse_dict(tokens: List[token.Token]) -> Tuple[ast.Dict, List[token.Token]]:
     
 def parse_attributes(tokens: List[token.Token]) -> Tuple[List[ast.HTMLAttribute], List[token.Token]]:
     # TODO: Correctly parse
-    body, tokens = consume_balanced_token(token.LeftBracket(), token.RightBracket(), tokens)
+    body, tokens = consume_balanced_token(token.LeftBrace(), token.RightBrace(), tokens)
     return body, tokens
 
 def parse_children(tokens: List[token.Token]) -> Tuple[List[ast.HTMLNode], List[token.Token]]:
@@ -234,6 +234,15 @@ def parse_node(tokens: List[token.Token]) -> Tuple[ast.HTMLNode, List[token.Toke
 
     return ast.HTMLNode(tag=tag, attrs=attrs, children=children), remainder
 
+def parse_binary_op(tokens: List[token.Token]) -> Tuple[ast.BinaryFilter, List[token.Token]]:
+    if not isinstance(tokens[0], token.Filter):
+        raise ParseError(f'Expected filter; got {tokens[0]}')
+    
+    node_pattern, remainder = parse_node(tokens[1:])
+    filter_ast = ast.BinaryFilter(filter_type=tokens[0].filterType, right_arg=node_pattern)
+
+    return (filter_ast, remainder)
+    
 def parse_unification(tokens: List[token.Token]) -> ast.NodeUnification:
     left_node, tokens = parse_node(tokens)
     tokens = consume_unification(tokens)

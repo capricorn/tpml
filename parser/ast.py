@@ -9,6 +9,7 @@ class ASTNodeType(StrEnum):
     NODE = 'node'
     UNIFICATION = 'unification'
     WILDCARD = 'wildcard'
+    FILTER = 'filter'
 
 @dataclass
 class Wildcard:
@@ -54,3 +55,10 @@ class NodeUnification:
     left: HTMLNode
     right: HTMLNode
     nodeType = ASTNodeType.UNIFICATION.value
+
+@dataclass
+class BinaryFilter:
+    # NB. Left arg is implicit; the document tree is passed to it
+    filter_type: str
+    right_arg: HTMLNode
+    nodeType = ASTNodeType.FILTER.value
