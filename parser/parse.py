@@ -188,6 +188,12 @@ def parse_dict(tokens: List[token.Token]) -> Tuple[ast.Dict, List[token.Token]]:
     
 def parse_attributes(tokens: List[token.Token]) -> Tuple[List[ast.HTMLAttribute], List[token.Token]]:
     # TODO: Correctly parse
+    try:
+        _,tokens = parse_wildcard(tokens)
+        return [[],tokens]
+    except ParseError:
+        ...
+
     body, tokens = consume_balanced_token(token.LeftBrace(), token.RightBrace(), tokens)
     return body, tokens
 
