@@ -161,6 +161,12 @@ def parse_dict_entry(tokens: List[token.Token]) -> Tuple[DictEntry, List[token.T
     except:
         ...
 
+    # WIP: Attempt unpack parsing here
+    try:
+        return parse_unpack_operator(tokens)
+    except:
+        ...
+
     try:
         key, tokens = parse_dict_key(tokens)
         tokens = parse_colon(tokens)
@@ -265,7 +271,7 @@ def parse(input: str) -> ast.HTMLNode:
 def parse_unpack_operator(tokens: List[token.Token]) -> Tuple[ast.UnpackNode, List[token.Token]]:
     token_types = [ type(t) for t in tokens ]
     match token_types:
-        case [token.UnpackOperator, token.Variable]:
+        case [token.UnpackOperator, token.Variable, *_]:
             return [ast.UnpackNode(variable=ast.HTMLNode(tag=tokens[1].name, attrs=[], children=[])), tokens[2:]]
     
     raise ParseError(f'Failed to parse unpack operator: {tokens}')

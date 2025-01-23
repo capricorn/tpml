@@ -216,3 +216,14 @@ def test_parse_unpack_operator():
     assert ast_unpack.variable.tag == 'Foo'
     assert ast_unpack.variable.variable
     assert tokens == []
+
+def test_parse_dict_unpack_entry():
+    tokens = lex.lex('{"foo":"bar", *Foo, "baz":"bar"}')
+    ast_dict, tokens = parse.parse_dict(tokens)
+
+    assert tokens == []
+    assert ast_dict.members == [
+        (ast.String(value='foo'), ast.String(value='bar')),
+        ast.UnpackNode(variable=ast.HTMLNode(tag='Foo', attrs=[], children=[])),
+        (ast.String(value='baz'), ast.String(value='bar')),
+    ]
