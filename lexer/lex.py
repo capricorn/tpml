@@ -12,6 +12,9 @@ class LexResult():
     remaining_input: str
     token: token.Token
 
+def unpack(input: str) -> bool:
+    return input[:1] == '*'
+
 def colon(input: str) -> bool:
     return input[:1] == ':'
 
@@ -145,6 +148,13 @@ def consume_bracket(input: str) -> Tuple[str, token.Token]:
     else:
         assert False, "'ch' is not a bracket."
 
+def consume_unpack(input: str) -> Tuple[str, token.Token]:
+    assert len(input) > 0
+    if input[0] == '*':
+        return (input[1:], token.UnpackOperator())
+    else:
+        raise LexError('Expected unpack symbol.')
+
 def lex(input: str) -> List[token.Token]:
     tokens = []
     while input != '':
@@ -177,6 +187,8 @@ def lex(input: str) -> List[token.Token]:
             input, token = consume_colon(input)
         elif filter(input):
             input, token = consume_filter(input)
+        elif unpack(input):
+            input, token = consume_unpack(input)
         else:
             raise LexError()
         

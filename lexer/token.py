@@ -62,6 +62,11 @@ class Variable(Token):
     name: str
 
 @dataclass
+class UnpackOperator(Token):
+    ''' The prefix operator "*Variable" '''
+    ...
+
+@dataclass
 class Filter(Token):
     class Type(StrEnum):
         ANY_DEPTH_SUBTREE_MATCH = '..>'

@@ -10,6 +10,7 @@ class ASTNodeType(StrEnum):
     UNIFICATION = 'unification'
     WILDCARD = 'wildcard'
     FILTER = 'filter'
+    UNPACK = 'unpack'
 
 @dataclass
 class Wildcard:
@@ -62,3 +63,9 @@ class BinaryFilter:
     filter_type: str
     right_arg: HTMLNode
     nodeType = ASTNodeType.FILTER.value
+
+@dataclass
+class UnpackNode:
+    # TODO: Consider implementing a separate AST node for variables (with associated lookup info)
+    variable: HTMLNode
+    nodeType = ASTNodeType.UNPACK.value

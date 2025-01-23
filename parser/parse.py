@@ -261,4 +261,3 @@ def parse(input: str) -> ast.HTMLNode:
     # Initially, _only_ parse nodes of the form (tag,[],[])
     node, _ = parse_node(tokens)
     return node
-

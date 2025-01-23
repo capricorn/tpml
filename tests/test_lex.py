@@ -78,3 +78,9 @@ def test_lex_any_subtree_filter():
     assert lex(input) == [
         token.Filter(filterType=token.Filter.Type.ANY_DEPTH_SUBTREE_MATCH)
     ]
+
+def test_lex_unpack_operator():
+    input = '*'
+    assert lex(input) == [
+        token.UnpackOperator()
+    ]
