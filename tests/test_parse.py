@@ -200,3 +200,10 @@ def test_parse_any_subtree_op():
             children=[],
         )
     )
+
+def test_parse_attribute_wildcard():
+    tokens = lex.lex('_')
+    ast_wildcard, tokens = parse.parse_attributes(tokens)
+    assert tokens == []
+    assert len(ast_wildcard) == 1
+    assert ast_wildcard[0] == ast.Wildcard()

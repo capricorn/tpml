@@ -190,7 +190,7 @@ def parse_attributes(tokens: List[token.Token]) -> Tuple[List[ast.HTMLAttribute]
     # TODO: Correctly parse
     try:
         _,tokens = parse_wildcard(tokens)
-        return [[],tokens]
+        return [[ast.Wildcard()],tokens]
     except ParseError:
         ...
 
