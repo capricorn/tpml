@@ -261,3 +261,11 @@ def parse(input: str) -> ast.HTMLNode:
     # Initially, _only_ parse nodes of the form (tag,[],[])
     node, _ = parse_node(tokens)
     return node
+
+def parse_unpack_operator(tokens: List[token.Token]) -> Tuple[ast.UnpackNode, List[token.Token]]:
+    token_types = [ type(t) for t in tokens ]
+    match token_types:
+        case [token.UnpackOperator, token.Variable]:
+            return [ast.UnpackNode(variable=ast.HTMLNode(tag=tokens[1].name, attrs=[], children=[])), tokens[2:]]
+    
+    raise ParseError(f'Failed to parse unpack operator: {tokens}')

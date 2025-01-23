@@ -207,3 +207,12 @@ def test_parse_attribute_wildcard():
     assert tokens == []
     assert len(ast_wildcard) == 1
     assert ast_wildcard[0] == ast.Wildcard()
+
+def test_parse_unpack_operator():
+    tokens = lex.lex('*Foo')
+    ast_unpack, tokens = parse.parse_unpack_operator(tokens)
+
+    assert type(ast_unpack) == ast.UnpackNode
+    assert ast_unpack.variable.tag == 'Foo'
+    assert ast_unpack.variable.variable
+    assert tokens == []
