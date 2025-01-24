@@ -1,5 +1,5 @@
 import { expect, test, assert } from 'vitest';
-import { match, matchSet, unify, unify_tree } from '../matcher';
+import { extract_variables, match, matchSet, unify, unify_tree } from '../matcher';
 import { html_beautify } from 'js-beautify';
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -235,4 +235,17 @@ test('Set matching success: strict', () => {
 test('Unify: delete node', () => {
     // TODO: Delete all <p> nodes i.e. (p,[],_) = ()
     // Above is regardless of child nodes of <p>
+});
+
+test('extract variables: node tag', () => {
+    let dom = new JSDOM('<div></div>');
+    let divMatchRule = {
+        tag: 'Foo',
+        attrs: [],
+        children: [],
+        nodeType: 'node',
+    } ;
+
+    let vars = extract_variables(dom.window.document.body.firstChild, divMatchRule);
+    expect(vars['Foo']).toBe('div');
 });

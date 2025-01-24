@@ -62,6 +62,22 @@ function match(node, matchRule) {
     return false;
 }
 
+// Return variables in node via matchRule (dictionary keyed by variable name in matchRule)
+function extract_variables(node, matchRule) {
+    let vars = {};
+    // Variable extraction applies to the left node in unification
+    // The tag itself is a variable
+    let nodeTypeVariable = (matchRule.tag[0].toUpperCase() == matchRule.tag[0]);
+    if (nodeTypeVariable) {
+        vars[matchRule.tag] = node.tagName.toLowerCase();
+    }
+
+    return vars;
+}
+
+// TODO: Load a tpml dict as a JS dict
+function reify_dict(dict_ast) {}
+
 function unify(node, matchRule, rewriteRule, document) {
     console.assert(match(node, matchRule));
 
@@ -94,4 +110,4 @@ function unify_tree(root_node, matchRule, rewriteRule, document) {
     }
 }
 
-module.exports = { match, matchSet, unify, unify_tree };
+module.exports = { match, matchSet, unify, unify_tree, extract_variables };
