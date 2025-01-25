@@ -1,0 +1,1 @@
+(img,Attrs,C)=(img,{Attrs, "style": "filter: grayscale(100%);"}, C)
