@@ -1,5 +1,5 @@
 import { expect, test, assert } from 'vitest';
-import { extract_node_attrs, extract_variables, match, matchSet, unify, unify_tree } from '../matcher';
+import { extract_node_attrs, extract_variables, match, matchSet, reify_dict_as_map, unify, unify_tree } from '../matcher';
 import { html_beautify } from 'js-beautify';
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -278,3 +278,22 @@ test('Extract variables: node attributes', () => {
     expect(vars['Attrs']['id']).toBe('baz');
     expect(vars['Attrs']['class']).toStrictEqual(['foo','bar']);
 })
+
+test('Reify dict: (string,string) entries', () => {
+    let ast_dict = [
+        [
+            {
+                tag: 'string',
+                value: 'foo'
+            },
+            {
+                tag: 'string',
+                value: 'bar'
+            }
+        ]
+    ];
+
+    let map = reify_dict_as_map(ast_dict, {});
+    expect(map.has('foo'));
+    expect(map.get('foo')).toBe('bar');
+});

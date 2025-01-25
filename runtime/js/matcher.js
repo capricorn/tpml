@@ -4,6 +4,10 @@ function variable(name) {
     return (name[0] == name[0].toUpperCase()) || name == '_';
 }
 
+function type_unpack(tag) {
+    return tag == 'unpack';
+}
+
 // TODO: Text node semantics..?
 function getChildren(node) {
     if (node.children == undefined) {
@@ -96,8 +100,50 @@ function extract_node_attrs(node) {
     return attrs;
 }
 
+function map_insert(map, new_entries_map) {
+    let newMap = new Map();
+
+    for (const [key,value] of new_entries_map) {
+        map.set(key, value);
+    }
+
+    return newMap;
+}
+
 // TODO: Load a tpml dict as a JS dict
-function reify_dict(dict_ast) {}
+function reify_dict_as_map(dict_ast_entries, vars) {
+    // Given a dictionary ast in rewriteRule,
+    // instantiate it as a js dict unpacking and inserting any
+    // vars in the process. 
+    // A dict is simply a list containing (for now...):
+    // 1. (String,String)
+    // 2. (String,[String])
+    // 3. Var
+    // 4. Unpack(Var)
+
+    let map = new Map();
+    for (const entry of dict_ast_entries) {
+        if (entry.tag && variable(entry.tag)) {
+            console.assert(false, 'Unimplemented');
+        } else if (type_unpack(entry.tag)) {
+            // TODO
+            console.assert(false, 'Unimplemented');
+        } else {
+            // If it isn't a variable or unpack of a variable, the key is a string.
+            console.assert(entry.length == 2);
+            console.assert(entry[0].value == 'string');
+
+            // TODO: The val (in this case) may be a list of strings; this
+            // needs handled specially; for now, disallow
+            console.assert(entry[1].value == 'string');
+
+            let [key,val] = entry;
+            map.set(key.value, val.value);
+        }
+    }
+
+    return map;
+}
 
 function unify(node, matchRule, rewriteRule, document) {
     console.assert(match(node, matchRule));
@@ -131,4 +177,12 @@ function unify_tree(root_node, matchRule, rewriteRule, document) {
     }
 }
 
-module.exports = { match, matchSet, unify, unify_tree, extract_variables, extract_node_attrs };
+module.exports = { 
+    match, 
+    matchSet, 
+    unify, 
+    unify_tree, 
+    extract_variables, 
+    extract_node_attrs, 
+    reify_dict_as_map 
+};
