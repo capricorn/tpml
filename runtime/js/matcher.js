@@ -100,14 +100,28 @@ function extract_node_attrs(node) {
     return attrs;
 }
 
+// new_entries_map: js object
 function map_insert(map, new_entries_map) {
-    let newMap = new Map();
+    let newMap = new Map(map);
 
     for (const [key,value] of new_entries_map) {
-        map.set(key, value);
+        newMap.set(key, value);
     }
 
     return newMap;
+}
+
+function clearNodeAttributes(node) {
+    for (const attr of node.attributes) {
+        node.removeAttribute(attr.name)
+    }
+}
+
+function replaceNodeAttributes(node, newAttrsMap) {
+    clearNodeAttributes(node);
+    for (const [key,value] of newAttrsMap) {
+        node.setAttribute(key, value);
+    }
 }
 
 // TODO: Load a tpml dict as a JS dict
@@ -124,18 +138,21 @@ function reify_dict_as_map(dict_ast_entries, vars) {
     let map = new Map();
     for (const entry of dict_ast_entries) {
         if (entry.tag && variable(entry.tag)) {
-            console.assert(false, 'Unimplemented');
+            //console.assert(false, 'Unimplemented');
+            // A variable in this context is expected to be a dict itself.
+            // (In this case the expectation is totally concrete, ie no vars, unpacking etc)
+            map = map_insert(map, Object.entries(vars[entry.tag]));
         } else if (type_unpack(entry.tag)) {
             // TODO
             console.assert(false, 'Unimplemented');
         } else {
             // If it isn't a variable or unpack of a variable, the key is a string.
-            console.assert(entry.length == 2);
-            console.assert(entry[0].value == 'string');
+            console.assert(entry.length == 2, `Bad [String,String] len: ${entry.length}`);
+            console.assert(entry[0].tag == 'string', `Bad [String,String] value type: ${entry[0].value}`);
 
             // TODO: The val (in this case) may be a list of strings; this
             // needs handled specially; for now, disallow
-            console.assert(entry[1].value == 'string');
+            console.assert(entry[1].tag == 'string');
 
             let [key,val] = entry;
             map.set(key.value, val.value);

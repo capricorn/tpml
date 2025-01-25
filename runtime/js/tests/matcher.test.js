@@ -297,3 +297,30 @@ test('Reify dict: (string,string) entries', () => {
     expect(map.has('foo'));
     expect(map.get('foo')).toBe('bar');
 });
+
+test('Reify dict: Var entries', () => {
+    let ast_dict = [
+        [
+            {
+                tag: 'string',
+                value: 'foo'
+            },
+            {
+                tag: 'string',
+                value: 'bar'
+            }
+        ],
+        {
+            tag: 'Foo',
+            attrs: [],
+            children: []
+        }
+    ];
+
+    let vars = { 'Foo': {'abc': '123'} };
+    let map = reify_dict_as_map(ast_dict, vars);
+    expect(map.has('foo'));
+    expect(map.get('foo')).toBe('bar');
+    expect(map.has('abc'));
+    expect(map.get('abc')).toBe('123');
+});
