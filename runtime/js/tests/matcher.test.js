@@ -237,7 +237,7 @@ test('Unify: delete node', () => {
     // Above is regardless of child nodes of <p>
 });
 
-test('extract variables: node tag', () => {
+test('Extract variables: node tag', () => {
     let dom = new JSDOM('<div></div>');
     let divMatchRule = {
         tag: 'Foo',
@@ -250,10 +250,31 @@ test('extract variables: node tag', () => {
     expect(vars['Foo']).toBe('div');
 });
 
-test('extract node attrs', () => {
+test('Extract node attrs', () => {
     let dom = new JSDOM('<div id="foo" class="baz bar"></div>');
     let attrs = extract_node_attrs(dom.window.document.body.firstChild);
 
     expect(attrs['id']).toBe('foo');
     expect(attrs['class']).toStrictEqual(['baz', 'bar']);
 });
+
+test('Extract variables: node attributes', () => {
+    let dom = new JSDOM('<div class="foo bar" id="baz"></div>');
+    let divMatchRule = {
+        tag: 'Foo',
+        attrs: [{
+            tag: 'Attrs',
+            attrs: [],
+            children: [],
+            nodeType: 'node'
+        }],
+        children: [],
+        nodeType: 'node',
+    } ;
+
+    let vars = extract_variables(dom.window.document.body.firstChild, divMatchRule);
+    expect(vars['Foo']).toBe('div');
+    expect(vars['Attrs']).toBeDefined()
+    expect(vars['Attrs']['id']).toBe('baz');
+    expect(vars['Attrs']['class']).toStrictEqual(['foo','bar']);
+})
