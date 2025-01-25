@@ -168,6 +168,12 @@ def parse_dict_entry(tokens: List[token.Token]) -> Tuple[DictEntry, List[token.T
         ...
 
     try:
+        var, tokens = parse_variable(tokens)
+        return (ast.HTMLNode(tag=var,attrs=[],children=[]), tokens)
+    except:
+        ...
+
+    try:
         key, tokens = parse_dict_key(tokens)
         tokens = parse_colon(tokens)
         value, tokens = parse_dict_value(tokens)
