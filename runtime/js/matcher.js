@@ -170,8 +170,17 @@ function unify(node, matchRule, rewriteRule, document) {
         tag = node.tag;
     }
 
+    
+
     // For now, only perform direct tag substitutions
+    // TODO: Stop creating a new element--this will likely break the page.
     let element = document.createElement(rewriteRule.tag);
+
+    // Attributes rewriting
+    // TODO: Handle wildcard
+    let vars = extract_variables(node, matchRule);
+    let newAttrs = reify_dict_as_map(rewriteRule.attrs, vars);
+    replaceNodeAttributes(element, newAttrs);
 
     for (const child of node.childNodes) {
         element.appendChild(child);

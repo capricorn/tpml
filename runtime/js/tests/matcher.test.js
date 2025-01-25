@@ -299,6 +299,7 @@ test('Reify dict: (string,string) entries', () => {
 });
 
 test('Reify dict: Var entries', () => {
+    // TODO: Fix -- this should use nodeType instead...
     let ast_dict = [
         [
             {
@@ -323,4 +324,92 @@ test('Reify dict: Var entries', () => {
     expect(map.get('foo')).toBe('bar');
     expect(map.has('abc'));
     expect(map.get('abc')).toBe('123');
+});
+
+test('unify: set attributes', () => {
+    const doc = `
+        <html>
+            <body>
+                <p></p>
+            </body>
+        </html>
+    `;
+
+    const matchRule = {
+        tag: 'p',
+        attrs: [],
+        children: []
+    };
+
+    const rewriteRule = {
+        tag: 'p',
+        attrs: [
+            [
+                {
+                    tag: 'string',
+                    'value': 'id'
+                },
+                {
+                    tag: 'string',
+                    'value': 'foo'
+                }
+            ]
+        ],
+        children: []
+    };
+
+    let dom = new JSDOM(doc);
+    let [result, children] = unify(dom.window.document.body.querySelector('p'), matchRule, rewriteRule, dom.window.document);
+    expect(children.length).toBe(0);
+    expect(result.tagName.toLowerCase()).toBe('p');
+    expect(result.id).toBe('foo');
+});
+
+test('unify: set attributes with unpack (union)', () => {
+    const doc = `
+        <html>
+            <body>
+                <p id="foo"></p>
+            </body>
+        </html>
+    `;
+
+    const matchRule = {
+        tag: 'p',
+        attrs: [{
+            tag: 'Foo',
+            attrs: [],
+            children: []
+        }],
+        children: []
+    };
+
+    const rewriteRule = {
+        tag: 'p',
+        attrs: [
+            {
+                tag: 'Foo',
+                attrs: [],
+                children: []
+            },
+            [
+                {
+                    tag: 'string',
+                    'value': 'class'
+                },
+                {
+                    tag: 'string',
+                    'value': 'bar'
+                }
+            ]
+        ],
+        children: []
+    };
+
+    let dom = new JSDOM(doc);
+    let [result, children] = unify(dom.window.document.body.querySelector('p'), matchRule, rewriteRule, dom.window.document);
+    expect(children.length).toBe(0);
+    expect(result.tagName.toLowerCase()).toBe('p');
+    expect(result.id).toBe('foo');
+    expect(result.className).toBe('bar');
 });
