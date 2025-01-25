@@ -240,13 +240,22 @@ def parse_node(tokens: List[token.Token]) -> Tuple[ast.HTMLNode, List[token.Toke
         raise ParseError(f'Expected tag name or variable; got {body[0]}')
 
     body = parse_comma_delim(body)
-    #attrs, body = parse_attributes(body)    # [] literal for now.
-    attrs, body = parse_dict(body)    # [] literal for now.
+    attrs = []
+
+    try:
+        #attrs, body = parse_attributes(body)    # [] literal for now.
+        # TODO: Attempt to parse attributes as a _variable_ first!
+        var, body = parse_variable(body)
+        attrs = [ast.HTMLNode(tag=var,attrs=[],children=[])]
+    except:
+        attrs, body = parse_dict(body)    # [] literal for now.
+        attrs = attrs.members
+
     body = parse_comma_delim(body)
     children, body = parse_children(body)
 
     # TODO: Consider serialized form of dict more carefully...
-    return ast.HTMLNode(tag=tag, attrs=attrs.members, children=children), remainder
+    return ast.HTMLNode(tag=tag, attrs=attrs, children=children), remainder
 
 def parse_binary_op(tokens: List[token.Token]) -> Tuple[ast.BinaryFilter, List[token.Token]]:
     if not isinstance(tokens[0], token.Filter):
