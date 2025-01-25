@@ -1,5 +1,5 @@
 import { expect, test, assert } from 'vitest';
-import { extract_variables, match, matchSet, unify, unify_tree } from '../matcher';
+import { extract_node_attrs, extract_variables, match, matchSet, unify, unify_tree } from '../matcher';
 import { html_beautify } from 'js-beautify';
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -248,4 +248,12 @@ test('extract variables: node tag', () => {
 
     let vars = extract_variables(dom.window.document.body.firstChild, divMatchRule);
     expect(vars['Foo']).toBe('div');
+});
+
+test('extract node attrs', () => {
+    let dom = new JSDOM('<div id="foo" class="baz bar"></div>');
+    let attrs = extract_node_attrs(dom.window.document.body.firstChild);
+
+    expect(attrs['id']).toBe('foo');
+    expect(attrs['class']).toStrictEqual(['baz', 'bar']);
 });

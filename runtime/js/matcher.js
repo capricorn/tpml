@@ -72,7 +72,28 @@ function extract_variables(node, matchRule) {
         vars[matchRule.tag] = node.tagName.toLowerCase();
     }
 
+    // If attributes contains a single Variable element extract
+    // the entire set as a var
+    if (matchRule.attrs.length == 1 && (matchRule.attrs[0].tag[0].toUpperCase() == matchRule.attrs[0].tag[0])) {
+        vars[matchRule.attrs[0].tag] = extract_node_attrs(node);
+    }
+
     return vars;
+}
+
+// Return a dictionary containing the html node attributes.
+function extract_node_attrs(node) {
+    let attrs = {};
+    for (const attr of node.attributes) {
+        let values = attr.value.split(' ');
+        if (values.length > 1) {
+            attrs[attr.name] = values;
+        } else {
+            attrs[attr.name] = attr.value;
+        }
+    }
+
+    return attrs;
 }
 
 // TODO: Load a tpml dict as a JS dict
@@ -110,4 +131,4 @@ function unify_tree(root_node, matchRule, rewriteRule, document) {
     }
 }
 
-module.exports = { match, matchSet, unify, unify_tree, extract_variables };
+module.exports = { match, matchSet, unify, unify_tree, extract_variables, extract_node_attrs };
