@@ -104,6 +104,14 @@ def consume_unification(tokens: List[token.Token]) -> List[token.Token]:
     
     return tokens[1:]
 
+def parse_var_index(tokens: List[token.Token]) -> Tuple[ast.VariableIndex, List[token.Token]]:
+    var_name, tokens = parse_variable(tokens)
+    index_body, tokens = consume_balanced_token(left_match=token.LeftBracket(), right_match=token.RightBracket(), tokens=tokens)
+    index_key_str,_ = parse_string(index_body)
+
+    index = ast.VariableIndex(var=var_name, index=index_key_str.value)
+    return [index, tokens]
+
 def parse_set(tokens: List[token.Token]) -> Tuple[ast.Set, List[token.Token]]:
     body, remainder = consume_balanced_token(left_match=token.LeftBrace(), right_match=token.RightBrace(), tokens=tokens)
 

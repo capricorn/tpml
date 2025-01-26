@@ -227,3 +227,10 @@ def test_parse_dict_unpack_entry():
         ast.UnpackNode(variable=ast.HTMLNode(tag='Foo', attrs=[], children=[])),
         (ast.String(value='baz'), ast.String(value='bar')),
     ]
+
+def test_parse_var_index_string():
+    tokens = lex.lex('Foo["baz"]')
+    ast_var, tokens = parse.parse_var_index(tokens)
+
+    assert tokens == []
+    assert ast_var == ast.VariableIndex(var='Foo', index='baz')

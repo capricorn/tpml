@@ -11,6 +11,13 @@ class ASTNodeType(StrEnum):
     WILDCARD = 'wildcard'
     FILTER = 'filter'
     UNPACK = 'unpack'
+    VAR_INDEX = 'var_index'
+
+@dataclass
+class VariableIndex:
+    var: str
+    index: str
+    nodeType: str = ASTNodeType.VAR_INDEX.value
 
 @dataclass
 class Wildcard:
