@@ -160,6 +160,11 @@ def parse_dict_value(tokens: List[token.Token]) -> Tuple[DictValue, List[token.T
         return parse_set(tokens)
     except ParseError:
         ...
+
+    try:
+        return parse_var_index(tokens)
+    except ParseError:
+        ...
     
     raise ParseError(f'Failed to parse dict value from tokens {tokens}')
 

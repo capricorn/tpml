@@ -234,3 +234,9 @@ def test_parse_var_index_string():
 
     assert tokens == []
     assert ast_var == ast.VariableIndex(var='Foo', index='baz')
+
+def test_parse_dict_value_var_index():
+    tokens = lex.lex('{"title": Attrs["href"]}')
+    ast_dict, tokens = parse.parse_dict(tokens)
+
+    assert tokens == []
