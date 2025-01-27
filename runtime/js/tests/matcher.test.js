@@ -423,3 +423,53 @@ test('Resolve variable index', () => {
 
     expect(result).toBe('https://google.com');
 });
+
+test('Rewrite attribute value using variable index', () => {
+    // THEN, next is string interpolation (consider syntax options; backtick or $)
+    // TODO: Perform a swap
+    const doc = `
+        <html>
+            <body>
+                <p id="foo" draggable="true"></p>
+            </body>
+        </html>
+    `;
+
+    const matchRule = {
+        tag: 'p',
+        attrs: [{
+            tag: 'Attrs',
+            attrs: [],
+            children: []
+        }],
+        children: []
+    };
+
+    const rewriteRule = {
+        tag: 'p',
+        attrs: [
+            {
+                tag: 'Attrs',
+                attrs: [],
+                children: []
+            },
+            [
+                {
+                    tag: 'string',
+                    'value': 'draggable'
+                },
+                {
+                    tag: 'var_index',
+                    var: 'Attrs',
+                    index: 'id'
+                }
+            ]
+        ],
+        children: []
+    };
+
+    let dom = new JSDOM(doc);
+    let [result, _] = unify(dom.window.document.body.querySelector('p'), matchRule, rewriteRule, dom.window.document);
+    expect(result.id).toBe('foo');
+    expect(result.getAttribute('draggable')).toBe('foo');
+});

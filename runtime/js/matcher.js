@@ -8,6 +8,10 @@ function type_unpack(tag) {
     return tag == 'unpack';
 }
 
+function type_var_index(tag) {
+    return tag == 'var_index';
+}
+
 // TODO: Text node semantics..?
 function getChildren(node) {
     if (node.children == undefined) {
@@ -154,15 +158,23 @@ function reify_dict_as_map(dict_ast_entries, vars) {
             console.assert(entry.length == 2, `Bad [String,String] len: ${entry.length}`);
             console.assert(entry[0].tag == 'string', `Bad [String,String] value type: ${entry[0].value}`);
 
-            // TODO: The val (in this case) may be a list of strings; this
-            // needs handled specially; for now, disallow
-            console.assert(entry[1].tag == 'string');
-
+            // Currently supported values:
+            // 1. string
+            // 2. variable index (resolves to string)
             let [key,val] = entry;
-            map.set(key.value, val.value);
+            if (val.tag == 'string') {
+                map.set(key.value, val.value);
+            } else if (val.tag == 'var_index') {
+                let attrKey = key.value;
+                map.set(attrKey, vars[val.var][val.index]);
+            } else {
+                console.assert(`Unsupported value type: ${entry[1].tag} for dict value`);
+            }
+
         }
     }
 
+    console.log(map);
     return map;
 }
 
