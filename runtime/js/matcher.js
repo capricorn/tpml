@@ -174,7 +174,6 @@ function reify_dict_as_map(dict_ast_entries, vars) {
         }
     }
 
-    console.log(map);
     return map;
 }
 
