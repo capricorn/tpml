@@ -1,5 +1,5 @@
 import { expect, test, assert } from 'vitest';
-import { extract_node_attrs, extract_variables, match, matchSet, reify_dict_as_map, unify, unify_tree } from '../matcher';
+import { extract_node_attrs, extract_variables, match, matchSet, reify_dict_as_map, resolveVariableIndex, unify, unify_tree } from '../matcher';
 import { html_beautify } from 'js-beautify';
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -412,4 +412,14 @@ test('unify: set attributes with unpack (union)', () => {
     expect(result.tagName.toLowerCase()).toBe('p');
     expect(result.id).toBe('foo');
     expect(result.className).toBe('bar');
+});
+
+test('Resolve variable index', () => {
+    let vars = { Foo: { href: 'https://google.com' } };
+    let result = resolveVariableIndex(vars, {
+        var: 'Foo',
+        index: 'href'
+    });
+
+    expect(result).toBe('https://google.com');
 });

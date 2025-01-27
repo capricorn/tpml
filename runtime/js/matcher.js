@@ -100,6 +100,10 @@ function extract_node_attrs(node) {
     return attrs;
 }
 
+function resolveVariableIndex(vars, varIndexAST) {
+    return vars[varIndexAST.var][varIndexAST.index];
+}
+
 // new_entries_map: js object
 function map_insert(map, new_entries_map) {
     let newMap = new Map(map);
@@ -210,5 +214,6 @@ module.exports = {
     unify_tree, 
     extract_variables, 
     extract_node_attrs, 
-    reify_dict_as_map 
+    reify_dict_as_map ,
+    resolveVariableIndex
 };
